@@ -1,5 +1,4 @@
-import base44 from "@base44/vite-plugin"Collapse commentComment on line R1gjevents commented on Aug 8, 2026 gjeventson Aug 8, 2026OwnerAuthorMore actionsdReactWrite a replyCode has comments. Press enter to view.
-import react from '@vitejs/plugin-react'
+import base44 from "@base44/vite-plugin"
 import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
