@@ -1,4 +1,5 @@
 import os
+from importlib.util import find_spec
 from pathlib import Path
 
 try:
@@ -31,9 +32,10 @@ INSTALLED_APPS = [
     "gallery",
 ]
 
+HAS_WHITENOISE = find_spec("whitenoise") is not None
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "gj_event_dashboard.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -42,6 +44,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if HAS_WHITENOISE:
+    MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
 ROOT_URLCONF = "gj_event_dashboard.urls"
 TEMPLATES = [

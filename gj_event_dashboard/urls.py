@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import include, path, re_path
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, JsonResponse
 from django.views.generic import TemplateView
 from django.views.static import serve
 from django.conf import settings
@@ -33,7 +33,12 @@ def favicon_view(request):
         raise Http404("favicon not found")
     return FileResponse(open(favicon_path, "rb"), content_type=content_type)
 
+
+def health_view(request):
+    return JsonResponse({"status": "ok", "service": "gjevents-backend"})
+
 urlpatterns = [
+    path("healthz/", health_view),
     re_path(r"^admin/gallery(?:/.*)?$", staff_member_required(ReactAppView.as_view())),
     re_path(r"^admin/assets/(?P<path>.*)$", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist", "assets")} ),
     path("admin/", admin.site.urls),
