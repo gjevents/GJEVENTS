@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import include, path, re_path
 from django.http import FileResponse, Http404
 from django.views.generic import TemplateView
@@ -34,7 +35,7 @@ def favicon_view(request):
     return FileResponse(open(favicon_path, "rb"), content_type=content_type)
 
 urlpatterns = [
-    re_path(r"^admin/gallery(?:/.*)?$", ReactAppView.as_view()),
+    re_path(r"^admin/gallery(?:/.*)?$", staff_member_required(ReactAppView.as_view())),
     re_path(r"^admin/assets/(?P<path>.*)$", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist", "assets")} ),
     path("admin/", admin.site.urls),
     path("api/", include("gallery.urls")),
