@@ -31,6 +31,12 @@ __pycache__/
 # Django database
 db.sqlite3
 
+# Local gallery uploads
+media/gallery/*
+!media/gallery/background_GJ_Event.png
+!media/gallery/test.png
+!media/gallery/test_r6LvI43.png
+
 # Build artifacts
 *.egg-info/
 .Python

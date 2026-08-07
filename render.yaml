@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: gjevents-backend
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt && npm ci && npm run build && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn gj_event_dashboard.wsgi:application
+    disk:
+      name: gallery-media
+      mountPath: /opt/render/project/src/media
+      sizeGB: 1
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: gjevents.in,www.gjevents.in,gjevents-backend.onrender.com
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        value: https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io,https://gjevents-backend.onrender.com
+      - key: DJANGO_CORS_ALLOWED_ORIGINS
+        value: https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io
+      - key: DJANGO_MEDIA_ROOT
+        value: /opt/render/project/src/media
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.12.8
