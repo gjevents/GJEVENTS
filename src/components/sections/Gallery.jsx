@@ -4,6 +4,18 @@ import { X, ZoomIn } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const resolveSitePath = (path) => {
+  if (!path || /^https?:\/\//i.test(path) || path.startsWith("/")) {
+    return path;
+  }
+  const basePath =
+    window.location.hostname === "gjevents.github.io" &&
+    window.location.pathname.toLowerCase().startsWith("/gjevents")
+      ? "/GJEVENTS/"
+      : "/";
+  return `${basePath}${path}`;
+};
+
 export default function Gallery() {
   const [active, setActive] = useState(null);
   const [images, setImages] = useState([]);
@@ -12,10 +24,15 @@ export default function Gallery() {
   useEffect(() => {
     const loadGallery = async () => {
       try {
-        const response = await fetch("/api/gallery/");
+        const apiPath =
+          window.location.hostname === "gjevents.github.io" &&
+          window.location.pathname.toLowerCase().startsWith("/gjevents")
+            ? "/GJEVENTS/api/gallery/"
+            : "/api/gallery/";
+        const response = await fetch(apiPath);
         if (!response.ok) throw new Error("Unable to load gallery");
         const payload = await response.json();
-        setImages(payload);
+        setImages(payload.map((item) => ({ ...item, image: resolveSitePath(item.image) })));
       } catch (error) {
         console.error(error);
       } finally {
