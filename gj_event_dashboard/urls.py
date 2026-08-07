@@ -35,6 +35,7 @@ def favicon_view(request):
 
 urlpatterns = [
     re_path(r"^admin/gallery(?:/.*)?$", ReactAppView.as_view()),
+    re_path(r"^admin/assets/(?P<path>.*)$", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist", "assets")} ),
     path("admin/", admin.site.urls),
     path("api/", include("gallery.urls")),
     # Serve static assets (CSS, JS, etc.)
