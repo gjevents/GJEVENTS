@@ -4,16 +4,10 @@ import { AlertCircle, CheckCircle2, ImagePlus, Loader2, RefreshCw, Trash2, Uploa
 import { toast } from "@/components/ui/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { apiCredentials, apiUrl, csrfHeaders, mediaUrl } from "@/lib/siteApi";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-
-const getCookie = (name) => {
-  const cookie = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith(`${name}=`));
-  return cookie ? decodeURIComponent(cookie.split("=")[1]) : "";
-};
 
 const formatDate = (value) => {
   if (!value) return "—";
@@ -34,10 +28,10 @@ export default function GalleryManagement() {
   const fetchImages = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/gallery/");
+      const response = await fetch(apiUrl("/api/gallery/"), { credentials: apiCredentials });
       if (!response.ok) throw new Error("Unable to load gallery images");
       const payload = await response.json();
-      setImages(payload);
+      setImages(payload.map((item) => ({ ...item, image: mediaUrl(item.image) })));
     } catch (error) {
       toast({ title: "Gallery load failed", description: error.message, variant: "destructive" });
     } finally {
@@ -91,11 +85,9 @@ export default function GalleryManagement() {
 
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open(method, endpoint);
-      const csrfToken = getCookie("csrftoken");
-      if (csrfToken) {
-        xhr.setRequestHeader("X-CSRFToken", csrfToken);
-      }
+      xhr.open(method, apiUrl(endpoint));
+      xhr.withCredentials = apiCredentials === "include";
+      Object.entries(csrfHeaders()).forEach(([header, value]) => xhr.setRequestHeader(header, value));
       xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable) {
           setUploadProgress(Math.round((event.loaded / event.total) * 100));
@@ -105,7 +97,7 @@ export default function GalleryManagement() {
         const payload = xhr.responseText ? JSON.parse(xhr.responseText) : {};
         if (xhr.status >= 200 && xhr.status < 300) {
           toast({ title: successTitle, description: successMessage, variant: "default" });
-          resolve(payload);
+          resolve({ ...payload, image: mediaUrl(payload.image) });
         } else {
           toast({ title: errorTitle, description: payload.error || errorMessage, variant: "destructive" });
           reject(new Error(payload.error || errorMessage));
@@ -164,11 +156,10 @@ export default function GalleryManagement() {
 
   const deleteImage = async (imageId) => {
     try {
-      const response = await fetch(`/api/gallery/${imageId}/`, {
+      const response = await fetch(apiUrl(`/api/gallery/${imageId}/`), {
         method: "DELETE",
-        headers: {
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
+        credentials: apiCredentials,
+        headers: csrfHeaders(),
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Delete failed");
