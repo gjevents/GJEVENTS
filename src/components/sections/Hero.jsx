@@ -75,7 +75,7 @@ export default function Hero() {
                 >
                   <img
                     src={slide.image}
-                    alt={`GJ Event ${slide.label}`}
+                    alt={`GJ Events ${slide.label}`}
                     className="h-full w-full scale-105 object-cover animate-kenburns"
                   />
                 </motion.div>

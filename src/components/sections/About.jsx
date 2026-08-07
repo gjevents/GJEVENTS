@@ -57,9 +57,9 @@ export default function About() {
       </span>
 
       <SectionHeading
-        eyebrow="About GJ Event"
+        eyebrow="About GJ Events"
         title={<>A Legacy of <span className="text-gradient-ember">Celebration</span></>}
-        subtitle="GJ Event began with a simple belief — that every gathering deserves to be extraordinary. Today we orchestrate premium Garba nights, concerts, corporate events and stall bazaars, combining the warmth of Indian hospitality with the precision of global luxury."
+        subtitle="GJ Events began with a simple belief — that every gathering deserves to be extraordinary. Today we orchestrate premium Garba nights, concerts, corporate events and stall bazaars, combining the warmth of Indian hospitality with the precision of global luxury."
       />
 
       <div className="mt-20 grid items-center gap-16 lg:grid-cols-2">
@@ -68,7 +68,7 @@ export default function About() {
           <motion.img
             style={{ y, scale: 1.12 }}
             src={ABOUT_IMAGE}
-            alt="GJ Event luxury event setup"
+            alt="GJ Events luxury event setup"
             className="h-[34rem] w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-inkbrown/60 to-transparent" />

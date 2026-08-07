@@ -74,7 +74,7 @@ export default function ComingSoon() {
           eyebrow="The Future"
           light
           title={<>Something <span className="text-gradient-gold">BIG</span> is Coming</>}
-          subtitle="GJ Event is building India's next-generation event platform — inspired by global event booking experiences, designed for the way India celebrates."
+          subtitle="GJ Events is building India's next-generation event platform — inspired by global event booking experiences, designed for the way India celebrates."
         />
 
         <div className="mt-20 grid items-center gap-16 lg:grid-cols-2">
@@ -127,7 +127,7 @@ export default function ComingSoon() {
               className="relative h-72 w-full max-w-sm rounded-3xl glass-dark p-8 premium-shadow"
             >
               <div className="flex items-center justify-between">
-                <span className="font-heading text-3xl font-bold text-gradient-gold">GJ Event</span>
+                <span className="font-heading text-3xl font-bold text-gradient-gold">GJ Events</span>
                 <span className="text-[10px] uppercase tracking-[0.25em] text-cream/60">VIP Pass</span>
               </div>
               <p className="mt-8 text-sm text-cream/70">Admit One · Digital Pass</p>

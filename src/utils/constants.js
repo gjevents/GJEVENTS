@@ -1,9 +1,9 @@
-// Central configuration for GJ Event website.
+// Central configuration for GJ Events website.
 // B2B portal URL for the external portal experience.
 export const B2B_PORTAL_URL = "https://script.google.com/macros/s/AKfycbzm_iWhbPpnih3f8pt-AlQNHOrkctc-vwDyjtbxnKqjz9qLs7-dPnbJNQNP0k-JaOVE/exec";
 
 export const BRAND = {
-  name: "GJ Event",
+  name: "GJ Events",
   tagline: "Professional Event Management",
   poweredBy: "Auctus Tech"
 };
@@ -46,12 +46,12 @@ export const GALLERY_ITEMS = [
   ...HERO_SLIDES.map((s) => ({
     id: `g-${s.id}`,
     src: s.image,
-    alt: `GJ Event ${s.label} — premium event management`
+    alt: `GJ Events ${s.label} — premium event management`
   })),
   {
     id: "g-about",
     src: ABOUT_IMAGE,
-    alt: "GJ Event luxury event setup — premium decoration"
+    alt: "GJ Events luxury event setup — premium decoration"
   }
 ];
 

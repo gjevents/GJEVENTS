@@ -3,12 +3,12 @@ import { Helmet } from "react-helmet-async";
 
 // SEO injector. Renders meta tags + JSON-LD structured data.
 export default function Seo({
-  title = "GJ Event | Premium Event Management Company in India",
-  description = "GJ Event is a premium event management company specializing in Garba nights, concerts, VIP pass distribution, corporate events, and stall bazaars. India's next-generation event platform is coming soon.",
+  title = "GJ Events | Navratri Passes, Garba Events & Stall Booking Ahmedabad",
+  description = "GJ Events connects audiences, brands and organizers with Navratri passes, Garba events, VIP bookings, stall opportunities and event collaborations in Ahmedabad.",
   path = "/",
   image = "https://media.base44.com/images/public/6a749d966a0d85567d02ee6f/5ca24ef02_generated_9c0696f6.png"
 }) {
-  const url = `https://gjevent.com${path}`;
+  const url = `https://gjevents.in${path}`;
   return (
     <Helmet>
       <title>{title}</title>
@@ -25,11 +25,11 @@ export default function Seo({
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "ProfessionalService",
-          name: "GJ Event",
+          name: "GJ Events",
           description,
           url,
           telephone: "+91-9104005719",
-          areaServed: "India",
+          areaServed: "Ahmedabad, India",
           knowsAbout: ["Event Management", "Garba Events", "Concerts", "VIP Pass Distribution", "Stall Bazaar"]
         })}
       </script>

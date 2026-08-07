@@ -6,21 +6,21 @@ export default function TermsConditions() {
   return (
     <>
       <Helmet>
-        <title>Terms &amp; Conditions | GJ Event</title>
+        <title>Terms &amp; Conditions | GJ Events</title>
         <meta
           name="description"
-          content="Terms & Conditions governing the use of GJ Event services, website, accounts, and event management features."
+          content="Terms & Conditions governing the use of GJ Events services, website, accounts, and event management features."
         />
-        <link rel="canonical" href="https://gjevent.com/terms-conditions" />
+        <link rel="canonical" href="https://gjevents.in/terms-conditions" />
       </Helmet>
       <LegalLayout eyebrow="Legal" title="Terms & Conditions">
         <Block
           heading="Acceptance of Terms"
-          body="By accessing the GJ Event website, creating an account, using Google Sign-In, contacting our team, uploading content through authorised admin tools, or engaging our services, you agree to these Terms & Conditions. If you do not agree, please stop using the website and services."
+          body="By accessing the GJ Events website, creating an account, using Google Sign-In, contacting our team, uploading content through authorised admin tools, or engaging our services, you agree to these Terms & Conditions. If you do not agree, please stop using the website and services."
         />
         <Block
           heading="Services"
-          body="GJ Event provides event management services including Garba events, concerts, VIP pass distribution, corporate events, stall bazaars, gallery presentation, and related digital tools. Specific deliverables, dates, pricing, responsibilities, and event rules are confirmed separately for each booking, campaign, or partnership."
+          body="GJ Events provides event management services including Garba events, concerts, VIP pass distribution, corporate events, stall bazaars, gallery presentation, and related digital tools. Specific deliverables, dates, pricing, responsibilities, and event rules are confirmed separately for each booking, campaign, or partnership."
         />
         <Block
           heading="Accounts and Sign-In"
@@ -28,7 +28,7 @@ export default function TermsConditions() {
         />
         <Block
           heading="Admin and Uploaded Content"
-          body="Gallery upload, replacement, and deletion features are intended only for authorised staff or administrators. Uploaded images and related titles or sections must be lawful, accurate, safe, and suitable for public display. GJ Event may remove content that is unauthorised, inappropriate, infringing, unsafe, or inconsistent with the website purpose."
+          body="Gallery upload, replacement, and deletion features are intended only for authorised staff or administrators. Uploaded images and related titles or sections must be lawful, accurate, safe, and suitable for public display. GJ Events may remove content that is unauthorised, inappropriate, infringing, unsafe, or inconsistent with the website purpose."
         />
         <Block
           heading="Bookings, Payments, and Cancellations"
@@ -44,7 +44,7 @@ export default function TermsConditions() {
         />
         <Block
           heading="Intellectual Property"
-          body="The GJ Event name, branding, website design, text, graphics, photos, event materials, and other content are owned by GJ Event or used with permission. You may not copy, reproduce, modify, sell, or distribute website or event materials without written permission, except as allowed by law."
+          body="The GJ Events name, branding, website design, text, graphics, photos, event materials, and other content are owned by GJ Events or used with permission. You may not copy, reproduce, modify, sell, or distribute website or event materials without written permission, except as allowed by law."
         />
         <Block
           heading="Availability and Changes"
@@ -52,7 +52,7 @@ export default function TermsConditions() {
         />
         <Block
           heading="Limitation of Liability"
-          body="To the maximum extent permitted by law, GJ Event is not liable for indirect, incidental, special, consequential, or punitive losses arising from website use, account access, event services, third-party services, or unavailable features. Where liability cannot be excluded, it is limited to the amount paid for the relevant service giving rise to the claim."
+          body="To the maximum extent permitted by law, GJ Events is not liable for indirect, incidental, special, consequential, or punitive losses arising from website use, account access, event services, third-party services, or unavailable features. Where liability cannot be excluded, it is limited to the amount paid for the relevant service giving rise to the claim."
         />
         <Block
           heading="Governing Law"
@@ -60,7 +60,7 @@ export default function TermsConditions() {
         />
         <Block
           heading="Contact"
-          body="For questions about these Terms & Conditions, account access, bookings, or website use, contact GJ Event through the contact details listed on the website."
+          body="For questions about these Terms & Conditions, account access, bookings, or website use, contact GJ Events through the contact details listed on the website."
         />
         <LastUpdated />
       </LegalLayout>

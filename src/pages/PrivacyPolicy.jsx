@@ -6,17 +6,17 @@ export default function PrivacyPolicy() {
   return (
     <>
       <Helmet>
-        <title>Privacy Policy | GJ Event</title>
+        <title>Privacy Policy | GJ Events</title>
         <meta
           name="description"
-          content="Privacy Policy for GJ Event, including how we collect, use, store, share, and protect account and Google Sign-In data."
+          content="Privacy Policy for GJ Events, including how we collect, use, store, share, and protect account and Google Sign-In data."
         />
-        <link rel="canonical" href="https://gjevent.com/privacy-policy" />
+        <link rel="canonical" href="https://gjevents.in/privacy-policy" />
       </Helmet>
       <LegalLayout eyebrow="Legal" title="Privacy Policy">
         <Block
           heading="Who We Are"
-          body="GJ Event provides event management services, pass and stall coordination, gallery management, and related digital experiences for visitors, partners, and account users. This Privacy Policy explains how we collect, use, store, share, and protect information when you use our website, account features, Google Sign-In, and services."
+          body="GJ Events provides event management services, pass and stall coordination, gallery management, and related digital experiences for visitors, partners, and account users. This Privacy Policy explains how we collect, use, store, share, and protect information when you use our website, account features, Google Sign-In, and services."
         />
         <Block
           heading="Information We Collect"
@@ -52,7 +52,7 @@ export default function PrivacyPolicy() {
         />
         <Block
           heading="Contact"
-          body="For privacy questions, data requests, or Google Sign-In concerns, contact GJ Event through the contact details listed on our website. Please include enough information for us to identify your account or request."
+          body="For privacy questions, data requests, or Google Sign-In concerns, contact GJ Events through the contact details listed on our website. Please include enough information for us to identify your account or request."
         />
         <Block
           heading="Changes to This Policy"

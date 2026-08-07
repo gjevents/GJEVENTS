@@ -4,7 +4,7 @@ import Particles from "@/components/ui/Particles";
 
 // 5-second cinematic unveil before the homepage. Plays once per session.
 const SEQUENCE = [
-  { at: 0, lines: ["GJ EVENT", "Professional Event Management"] },
+  { at: 0, lines: ["GJ EVENTS", "Professional Event Management"] },
   { at: 2000, line: "Something BIG is Coming..." },
   { at: 3000, line: "Launching India's Next Generation Event Platform" },
   { at: 4200, line: "Coming Soon" }
@@ -98,7 +98,7 @@ export default function SplashScreen({ onDone }) {
             <div className="mt-10 flex min-h-[5rem] flex-col items-center justify-center text-center px-6">
               {stage === 0 && (
                 <>
-                  <Words text="GJ EVENT" className="font-heading text-4xl sm:text-5xl font-bold text-cream" />
+                  <Words text="GJ EVENTS" className="font-heading text-4xl sm:text-5xl font-bold text-cream" />
                   <motion.span
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}

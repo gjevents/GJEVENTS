@@ -52,16 +52,16 @@ export default function Footer() {
             <h3 className="font-heading text-xl font-semibold text-cream">Explore</h3>
             <ul className="mt-6 space-y-3 text-sm">
               {[
-                ["About", "#about"],
-                ["Services", "#services"],
-                ["Coming Soon", "#coming-soon"],
-                ["Gallery", "#gallery"],
-                ["Contact", "#contact"]
+                ["About", "/about"],
+                ["Services", "/services"],
+                ["Collaborate", "/collaborate"],
+                ["Events", "/events"],
+                ["Contact", "/contact"]
               ].map(([label, href]) => (
                 <li key={href}>
-                  <a href={href} className="transition-colors hover:text-golden">
+                  <Link to={href} className="transition-colors hover:text-golden">
                     {label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

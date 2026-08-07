@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gjevents.in/sitemap.xml
