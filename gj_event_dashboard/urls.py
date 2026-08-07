@@ -5,7 +5,6 @@ from django.http import FileResponse, Http404
 from django.views.generic import TemplateView
 from django.views.static import serve
 from django.conf import settings
-from django.conf.urls.static import static
 import os
 
 # Serve React app (SPA)
@@ -39,15 +38,11 @@ urlpatterns = [
     re_path(r"^admin/assets/(?P<path>.*)$", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist", "assets")} ),
     path("admin/", admin.site.urls),
     path("api/", include("gallery.urls")),
+    re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
     # Serve static assets (CSS, JS, etc.)
     re_path(r"^assets/(?P<path>.*)$", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist", "assets")} ),
     path("favicon.svg", favicon_view),
     path("favicon.ico", favicon_view),
     path("sitemap.xml", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist"), "path": "sitemap.xml"}),
-]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-urlpatterns += [
     re_path(r"^(?!admin).*$", ReactAppView.as_view()),
 ]
