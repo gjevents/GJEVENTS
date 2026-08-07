@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Saffron & Soil palette */
+    --heritage-orange: 26 76% 53%;
+    --royal-brown: 25 42% 21%;
+    --warm-cream: 36 47% 97%;
+    --golden: 43 70% 54%;
+    --dark-brown: 25 72% 10%;
+    --near-black-brown: 26 45% 8%;
+
+    --background: var(--warm-cream);
+    --foreground: 25 72% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 25 72% 10%;
+    --primary: var(--heritage-orange);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--royal-brown);
+    --secondary-foreground: 0 0% 100%;
+    --muted: 36 30% 93%;
+    --muted-foreground: 25 20% 40%;
+    --accent: var(--golden);
+    --accent-foreground: 25 72% 10%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 20% 88%;
+    --input: 30 20% 88%;
+    --ring: 43 70% 54%;
+    --radius: 0.75rem;
+
+    --font-heading: 'Cormorant Garamond', ui-serif, Georgia, serif;
+    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Cormorant Garamond', ui-serif, Georgia, serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  * {
+    @apply border-border outline-ring/40;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: hsl(var(--golden));
+    color: hsl(var(--dark-brown));
+  }
+}
+
+@layer components {
+  /* Premium glassmorphism card */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(32px) saturate(160%);
+    -webkit-backdrop-filter: blur(32px) saturate(160%);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+  }
+
+  .glass-dark {
+    background: rgba(45, 27, 8, 0.55);
+    backdrop-filter: blur(32px) saturate(160%);
+    -webkit-backdrop-filter: blur(32px) saturate(160%);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+  }
+
+  /* Gilded edge */
+  .gilded-edge {
+    position: relative;
+  }
+  .gilded-edge::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--golden)), transparent 40%, transparent 60%, hsl(var(--golden)));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(120deg, #D4AF37 0%, #E8C869 35%, #B8860B 70%, #D4AF37 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-ember {
+    background: linear-gradient(120deg, #E67E22 0%, #D4AF37 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+@layer utilities {
+  .font-serif-display { font-family: var(--font-heading); }
+
+  .premium-shadow {
+    box-shadow: 0 24px 60px -18px rgba(45, 27, 8, 0.45), 0 8px 24px -12px rgba(45, 27, 8, 0.25);
+  }
+
+  .bg-heritage-gradient {
+    background: linear-gradient(135deg, #3D2B1F 0%, #5C3A26 35%, #2D1B08 100%);
+  }
+
+  .bg-saffron-gradient {
+    background: linear-gradient(135deg, #E67E22 0%, #D4AF37 100%);
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* Premium scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: hsl(var(--warm-cream)); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(hsl(var(--heritage-orange)), hsl(var(--royal-brown)));
+  border-radius: 999px;
+}

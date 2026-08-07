@@ -1,0 +1,16 @@
+{
+  "pythonVersion": "3.14",
+  "pythonPlatform": "Windows",
+  "typeCheckingMode": "off",
+  "reportMissingModuleSource": false,
+  "reportMissingImports": false,
+  "reportMissingTypeStubs": false,
+  "reportOptionalMemberAccess": false,
+  "reportOptionalSubscript": false,
+  "reportOptionalOperand": false,
+  "reportUnknownMemberType": false,
+  "reportUnknownArgumentType": false,
+  "reportUnknownVariableType": false,
+  "exclude": ["node_modules", "dist", "gj_event_dashboard"],
+  "include": ["gj_event_dashboard"]
+}
