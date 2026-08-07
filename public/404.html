@@ -6,7 +6,11 @@
     <title>Redirecting | GJ Events</title>
     <script>
       sessionStorage.redirect = location.pathname + location.search + location.hash;
-      location.replace("/");
+      location.replace(
+        location.hostname === "gjevents.github.io" && location.pathname.toLowerCase().startsWith("/gjevents")
+          ? "/GJEVENTS/"
+          : "/"
+      );
     </script>
   </head>
   <body>

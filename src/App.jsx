@@ -12,6 +12,13 @@ import TermsConditions from '@/pages/TermsConditions';
 import GalleryManagement from '@/pages/Admin/GalleryManagement';
 // Add page imports here
 
+const routerBasename =
+  typeof window !== "undefined" &&
+  window.location.hostname === "gjevents.github.io" &&
+  window.location.pathname.toLowerCase().startsWith("/gjevents")
+    ? "/GJEVENTS"
+    : "/";
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
@@ -58,7 +65,7 @@ function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
-        <Router>
+        <Router basename={routerBasename}>
           <ScrollToTop />
           <AuthenticatedApp />
         </Router>
