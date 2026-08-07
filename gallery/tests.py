@@ -1,5 +1,6 @@
 from io import BytesIO
 
+from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
@@ -9,6 +10,14 @@ from .models import GalleryImage
 
 
 class GalleryImageAPITests(TestCase):
+    def setUp(self):
+        self.staff_user = get_user_model().objects.create_user(
+            username="gallery-admin",
+            email="gallery-admin@example.com",
+            password="test-password-123",
+            is_staff=True,
+        )
+
     def create_test_image(self):
         image_file = BytesIO()
         Image.new("RGB", (200, 200), color="gold").save(image_file, format="PNG")
@@ -24,6 +33,8 @@ class GalleryImageAPITests(TestCase):
         self.assertEqual(len(response.json()), 1)
 
     def test_create_gallery_image_saves_file_and_returns_201(self):
+        self.client.force_login(self.staff_user)
+
         response = self.client.post(
             reverse("gallery-list"),
             {
@@ -36,3 +47,16 @@ class GalleryImageAPITests(TestCase):
 
         self.assertEqual(response.status_code, 201)
         self.assertTrue(GalleryImage.objects.filter(title="Opening").exists())
+
+    def test_create_gallery_image_requires_staff(self):
+        response = self.client.post(
+            reverse("gallery-list"),
+            {
+                "section": "Events",
+                "title": "Opening",
+                "image": self.create_test_image(),
+            },
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, 403)

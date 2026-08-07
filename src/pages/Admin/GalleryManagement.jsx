@@ -8,6 +8,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
+const getCookie = (name) => {
+  const cookie = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${name}=`));
+  return cookie ? decodeURIComponent(cookie.split("=")[1]) : "";
+};
+
 const formatDate = (value) => {
   if (!value) return "—";
   const date = new Date(value);
@@ -85,6 +92,10 @@ export default function GalleryManagement() {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open(method, endpoint);
+      const csrfToken = getCookie("csrftoken");
+      if (csrfToken) {
+        xhr.setRequestHeader("X-CSRFToken", csrfToken);
+      }
       xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable) {
           setUploadProgress(Math.round((event.loaded / event.total) * 100));
@@ -153,7 +164,12 @@ export default function GalleryManagement() {
 
   const deleteImage = async (imageId) => {
     try {
-      const response = await fetch(`/api/gallery/${imageId}/`, { method: "DELETE" });
+      const response = await fetch(`/api/gallery/${imageId}/`, {
+        method: "DELETE",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+      });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Delete failed");
       setImages((current) => current.filter((item) => item.id !== imageId));

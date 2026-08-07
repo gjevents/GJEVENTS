@@ -2,7 +2,6 @@ import os
 
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from PIL import Image as PILImage
 
@@ -29,7 +28,12 @@ def _validate_image(file_obj):
     file_obj.seek(0)
 
 
-@csrf_exempt
+def _require_staff(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return None
+    return JsonResponse({"error": "Staff access is required."}, status=403)
+
+
 @require_http_methods(["GET", "POST"])
 def gallery_images(request):
     if request.method == "GET":
@@ -49,6 +53,10 @@ def gallery_images(request):
         return JsonResponse(data, safe=False)
 
     if request.method == "POST":
+        staff_error = _require_staff(request)
+        if staff_error:
+            return staff_error
+
         try:
             _validate_image(request.FILES["image"])
         except (KeyError, ValidationError) as exc:
@@ -75,9 +83,12 @@ def gallery_images(request):
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
-@csrf_exempt
 @require_http_methods(["PUT", "DELETE"])
 def gallery_image_detail(request, pk):
+    staff_error = _require_staff(request)
+    if staff_error:
+        return staff_error
+
     try:
         instance = GalleryImage.objects.get(pk=pk)
     except GalleryImage.DoesNotExist:

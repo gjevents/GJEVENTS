@@ -57,15 +57,10 @@ export function Block({ heading, body }) {
   );
 }
 
-export function LastUpdated() {
+export function LastUpdated({ date = "August 7, 2026" }) {
   return (
     <p className="text-sm text-muted-foreground">
-      Last updated:{" "}
-      {new Date().toLocaleDateString("en-IN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      })}
+      Last updated: {date}
     </p>
   );
 }
