@@ -1,0 +1,24 @@
+{
+  "css.validate": false,
+  "css.lint.unknownAtRules": "ignore",
+  "css.lint.vendorPrefix": "ignore",
+  "tailwindCSS.includeLanguages": {
+    "javascript": "javascript",
+    "javascriptreact": "javascriptreact",
+    "typescript": "typescript",
+    "typescriptreact": "typescriptreact"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    "(?:className|class)=\\s*\\\"([^\\\"]*)\\\""
+  ],
+  "json.schemas": [],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.formatOnSave": false
+  },
+  "python.linting.enabled": false,
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.ignoredFiles": ["gj_event_dashboard/**"],
+  "pylance.analysis.typeCheckingMode": "off",
+  "pylance.analysis.diagnosticMode": "off"
+}
