@@ -5,6 +5,7 @@ import { HERO_SLIDES, B2B_PORTAL_URL } from "@/utils/constants";
 
 const SLIDE_MS = 4200;
 
+// Magnetic B2B portal button.
 function MagneticButton() {
   const ref = useRef(null);
   const x = useMotionValue(0);
@@ -104,9 +105,9 @@ export default function Hero() {
           transition={{ duration: 1, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="font-heading text-5xl font-bold leading-[1.05] text-cream sm:text-6xl md:text-7xl lg:text-8xl"
         >
-          GJ Events
+          Experience Events
           <br />
-          <span className="text-gradient-gold">Event Booking Platform</span>
+          <span className="text-gradient-gold">Like Never Before</span>
         </motion.h1>
 
         <motion.p
@@ -117,34 +118,6 @@ export default function Hero() {
         >
           Professional Event Management | Premium Pass Distribution | Business
           Opportunities | Stall Bazaar
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-5 max-w-3xl rounded-lg border border-golden/40 bg-inkbrown/45 px-5 py-4 text-left text-sm leading-6 text-cream/85 shadow-[0_18px_50px_-28px_rgba(0,0,0,0.65)] backdrop-blur-md sm:text-base"
-        >
-          <p>
-            <strong className="text-golden">App name:</strong> GJ Events
-          </p>
-          <p className="mt-2">
-            <strong className="text-golden">Purpose of this app:</strong> GJ
-            Events lets visitors view event information, book Navratri and Garba
-            passes, request VIP bookings, explore stall opportunities, and
-            contact the GJ Events team without signing in.
-          </p>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.65 }}
-          className="mt-4 max-w-3xl text-sm leading-6 text-cream/75 sm:text-base"
-        >
-          Use GJ Events to view event information, book Navratri and Garba
-          passes, request VIP bookings, explore stall opportunities, and
-          collaborate with our event team in Ahmedabad.
         </motion.p>
 
         <motion.div
