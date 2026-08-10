@@ -119,6 +119,23 @@ export default function Hero() {
           Opportunities | Stall Bazaar
         </motion.p>
 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-5 max-w-3xl rounded-lg border border-golden/40 bg-inkbrown/45 px-5 py-4 text-left text-sm leading-6 text-cream/85 shadow-[0_18px_50px_-28px_rgba(0,0,0,0.65)] backdrop-blur-md sm:text-base"
+        >
+          <p>
+            <strong className="text-golden">App name:</strong> GJ Events
+          </p>
+          <p className="mt-2">
+            <strong className="text-golden">Purpose of this app:</strong> GJ
+            Events lets visitors view event information, book Navratri and Garba
+            passes, request VIP bookings, explore stall opportunities, and
+            contact the GJ Events team without signing in.
+          </p>
+        </motion.div>
+
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
