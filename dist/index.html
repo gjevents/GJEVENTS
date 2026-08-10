@@ -37,6 +37,78 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(rgba(31, 18, 11, 0.72), rgba(31, 18, 11, 0.86)),
+          url("https://media.base44.com/images/public/6a749d966a0d85567d02ee6f/5ca24ef02_generated_9c0696f6.png") center / cover fixed;
+        color: #fff8e7;
+        font-family: Inter, Arial, sans-serif;
+      }
+
+      #root > main {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+        padding: 48px 24px;
+        text-align: center;
+      }
+
+      #root h1 {
+        margin: 0;
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(3.5rem, 9vw, 8rem);
+        line-height: 0.95;
+        color: #fff8e7;
+      }
+
+      #root p {
+        max-width: 780px;
+        margin: 18px auto 0;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        line-height: 1.7;
+        color: rgba(255, 248, 231, 0.86);
+      }
+
+      #root p:first-of-type {
+        margin-top: 28px;
+        color: #d4af37;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+      }
+
+      .fallback-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 14px;
+        margin-top: 34px;
+      }
+
+      .fallback-actions a {
+        border: 1px solid rgba(212, 175, 55, 0.55);
+        border-radius: 999px;
+        padding: 13px 22px;
+        color: #fff8e7;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(31, 18, 11, 0.48);
+      }
+
+      .fallback-actions a:first-child {
+        background: linear-gradient(135deg, #f7d774, #b8860b);
+        color: #2f2118;
+      }
+    </style>
 
     <!-- GitHub Pages SPA path restoration -->
     <script>
@@ -118,6 +190,10 @@ if (window.self === window.top) {
           Visitors can view information about GJ Events and contact the team
           without signing in.
         </p>
+        <div class="fallback-actions">
+          <a href="/contact">Contact GJ Events</a>
+          <a href="/privacy-policy">Privacy Policy</a>
+        </div>
       </main>
     </div>
   </body>
