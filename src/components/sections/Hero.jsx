@@ -5,7 +5,6 @@ import { HERO_SLIDES, B2B_PORTAL_URL } from "@/utils/constants";
 
 const SLIDE_MS = 4200;
 
-// Magnetic B2B portal button — drifts toward the cursor.
 function MagneticButton() {
   const ref = useRef(null);
   const x = useMotionValue(0);
@@ -22,6 +21,7 @@ function MagneticButton() {
     x.set(dx * 0.3);
     y.set(dy * 0.3);
   };
+
   const reset = () => {
     x.set(0);
     y.set(0);
@@ -59,7 +59,6 @@ export default function Hero() {
 
   return (
     <section id="hero" className="relative h-[100svh] w-full overflow-hidden">
-      {/* Slideshow */}
       <div className="absolute inset-0">
         <AnimatePresence mode="sync">
           {HERO_SLIDES.map(
@@ -84,11 +83,9 @@ export default function Hero() {
         </AnimatePresence>
       </div>
 
-      {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-inkbrown/70 via-inkbrown/55 to-inkbrown/85" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(212,175,55,0.18),transparent_60%)]" />
 
-      {/* Content */}
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
         <motion.span
           initial={{ opacity: 0, y: 20 }}
@@ -107,9 +104,9 @@ export default function Hero() {
           transition={{ duration: 1, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="font-heading text-5xl font-bold leading-[1.05] text-cream sm:text-6xl md:text-7xl lg:text-8xl"
         >
-          Experience Events
+          GJ Events
           <br />
-          <span className="text-gradient-gold">Like Never Before</span>
+          <span className="text-gradient-gold">Event Booking Platform</span>
         </motion.h1>
 
         <motion.p
@@ -118,8 +115,19 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.55 }}
           className="mt-8 max-w-2xl text-base text-cream/80 sm:text-lg"
         >
-          Professional Event Management · Premium Pass Distribution · Business
-          Opportunities · Stall Bazaar
+          Professional Event Management | Premium Pass Distribution | Business
+          Opportunities | Stall Bazaar
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.65 }}
+          className="mt-4 max-w-3xl text-sm leading-6 text-cream/75 sm:text-base"
+        >
+          Use GJ Events to view event information, book Navratri and Garba
+          passes, request VIP bookings, explore stall opportunities, and
+          collaborate with our event team in Ahmedabad.
         </motion.p>
 
         <motion.div
@@ -139,7 +147,6 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Gold progress bar */}
       <div className="absolute bottom-0 left-0 z-10 h-1 w-full bg-cream/10">
         <motion.div
           key={index}

@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 
 // SEO injector. Renders meta tags + JSON-LD structured data.
 export default function Seo({
-  title = "GJ Events | Navratri Passes, Garba Events & Stall Booking Ahmedabad",
+  title = "GJ Events",
   description = "GJ Events connects audiences, brands and organizers with Navratri passes, Garba events, VIP bookings, stall opportunities and event collaborations in Ahmedabad.",
   path = "/",
   image = "https://media.base44.com/images/public/6a749d966a0d85567d02ee6f/5ca24ef02_generated_9c0696f6.png"
@@ -12,6 +12,8 @@ export default function Seo({
   return (
     <Helmet>
       <title>{title}</title>
+      <meta name="application-name" content="GJ Events" />
+      <meta name="title" content={title} />
       <meta name="description" content={description} />
       <link rel="canonical" href={url} />
       <meta property="og:title" content={title} />

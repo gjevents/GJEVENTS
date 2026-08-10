@@ -19,7 +19,7 @@ const routerBasename =
     ? "/GJEVENTS"
     : "/";
 
-const AuthenticatedApp = () => {
+const AdminAuthGate = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   // Show loading spinner while checking app public settings or auth
@@ -42,36 +42,38 @@ const AuthenticatedApp = () => {
     }
   }
 
-  // Render the main app
-  return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<Home />} />
-      <Route path="/events" element={<Home />} />
-      <Route path="/services" element={<Home />} />
-      <Route path="/collaborate" element={<Home />} />
-      <Route path="/contact" element={<Home />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-      <Route path="/terms-conditions" element={<TermsConditions />} />
-      <Route path="/admin/gallery" element={<GalleryManagement />} />
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
-  );
+  return <GalleryManagement />;
 };
 
 
 function App() {
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router basename={routerBasename}>
-          <ScrollToTop />
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClientInstance}>
+      <Router basename={routerBasename}>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<Home />} />
+          <Route path="/events" element={<Home />} />
+          <Route path="/services" element={<Home />} />
+          <Route path="/collaborate" element={<Home />} />
+          <Route path="/contact" element={<Home />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-conditions" element={<TermsConditions />} />
+          <Route
+            path="/admin/gallery"
+            element={
+              <AuthProvider>
+                <AdminAuthGate />
+              </AuthProvider>
+            }
+          />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </Router>
+      <Toaster />
+    </QueryClientProvider>
   )
 }
 
