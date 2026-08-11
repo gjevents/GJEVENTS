@@ -35,7 +35,7 @@ def favicon_view(request):
 
 
 def health_view(request):
-    return JsonResponse({"status": "ok", "service": "gjevents-backend"})
+    return JsonResponse({"status": "ok", "service": "gjevents-1"})
 
 urlpatterns = [
     path("healthz/", health_view),
