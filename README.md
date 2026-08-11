@@ -35,19 +35,19 @@ Recommended setup:
 2. Set backend environment variables:
    - `DJANGO_DEBUG=False`
    - `DJANGO_SECRET_KEY=<secure random value>`
-   - `DJANGO_ALLOWED_HOSTS=gjevents-1.onrender.com,gjevents.in,www.gjevents.in`
-   - `DJANGO_CSRF_TRUSTED_ORIGINS=https://gjevents-1.onrender.com,https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io`
+   - `DJANGO_ALLOWED_HOSTS=gjevents-bfjz.onrender.com,gjevents.in,www.gjevents.in`
+   - `DJANGO_CSRF_TRUSTED_ORIGINS=https://gjevents-bfjz.onrender.com,https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io`
    - `DJANGO_CORS_ALLOWED_ORIGINS=https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io`
    - `DJANGO_MEDIA_ROOT=/opt/render/project/src/media`
    - `DJANGO_SQLITE_PATH=/opt/render/project/src/media/db.sqlite3`
 3. Add this GitHub Actions repository variable:
-   - `VITE_API_BASE_URL=https://gjevents-1.onrender.com`
+   - `VITE_API_BASE_URL=https://gjevents-bfjz.onrender.com`
 4. Re-run the GitHub Pages workflow.
 
 Client flow after deployment:
 
 ```text
-https://gjevents-1.onrender.com/admin/login/
+https://gjevents-bfjz.onrender.com/admin/login/
 https://gjevents.in/admin/gallery
 ```
 

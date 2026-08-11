@@ -16,7 +16,7 @@ ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get(
         "DJANGO_ALLOWED_HOSTS",
-        "localhost,127.0.0.1,gjevents.in,www.gjevents.in,gjevents-1.onrender.com",
+        "localhost,127.0.0.1,gjevents.in,www.gjevents.in,gjevents-bfjz.onrender.com",
     ).split(",")
     if host.strip()
 ]
@@ -104,7 +104,7 @@ CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
         "DJANGO_CSRF_TRUSTED_ORIGINS",
-        "https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io,https://gjevents-1.onrender.com",
+        "https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io,https://gjevents-bfjz.onrender.com",
     ).split(",")
     if origin.strip()
 ]
