@@ -152,6 +152,8 @@ function HeroEditor({ item, onClose, onSave }) {
   const [showGrid, setShowGrid] = useState(true);
   const [finalPreview, setFinalPreview] = useState(false);
   const [viewport, setViewport] = useState({ width: 1440, height: 820 });
+  const [toolsHidden, setToolsHidden] = useState(false);
+  const [toolPosition, setToolPosition] = useState({ x: 24, y: 24 });
   const previewRef = useRef(null);
   const activePreview = HERO_PREVIEW_MODES.find((mode) => mode.id === previewMode) || HERO_PREVIEW_MODES[0];
   const previewRatio = previewMode === "desktop" ? `${viewport.width} / ${viewport.height}` : activePreview.ratio;
@@ -166,6 +168,13 @@ function HeroEditor({ item, onClose, onSave }) {
   }, []);
 
   useEffect(() => {
+    setToolPosition((position) => ({
+      x: Math.min(position.x, Math.max(12, viewport.width - 96)),
+      y: Math.min(position.y, Math.max(12, viewport.height - 96)),
+    }));
+  }, [viewport]);
+
+  useEffect(() => {
     document.body.style.overflow = finalPreview ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
@@ -177,6 +186,27 @@ function HeroEditor({ item, onClose, onSave }) {
     if (!rect) return;
     update("text_position_x", Math.round(((event.clientX - rect.left) / rect.width) * 100));
     update("text_position_y", Math.round(((event.clientY - rect.top) / rect.height) * 100));
+  };
+  const startToolDrag = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const origin = { ...toolPosition };
+    const move = (moveEvent) => {
+      const panelWidth = toolsHidden ? 280 : 384;
+      const panelHeight = toolsHidden ? 60 : Math.min(620, viewport.height - 32);
+      setToolPosition({
+        x: Math.min(Math.max(12, origin.x + moveEvent.clientX - startX), Math.max(12, viewport.width - panelWidth - 12)),
+        y: Math.min(Math.max(12, origin.y + moveEvent.clientY - startY), Math.max(12, viewport.height - panelHeight - 12)),
+      });
+    };
+    const stop = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", stop);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", stop, { once: true });
   };
   const save = async () => {
     setSaving(true);
@@ -240,17 +270,23 @@ function HeroEditor({ item, onClose, onSave }) {
     </div>
   );
   const previewTools = (
-    <div onPointerDown={(event) => event.stopPropagation()} onPointerMove={(event) => event.stopPropagation()} className="max-h-[calc(100svh-8rem)] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-[1.25rem] border border-white/15 bg-slate-950/85 p-4 text-white shadow-2xl backdrop-blur-xl">
-      <div className="flex items-start justify-between gap-3">
+    <div onPointerDown={(event) => event.stopPropagation()} onPointerMove={(event) => event.stopPropagation()} className="max-h-[calc(100svh-2rem)] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-[1.25rem] border border-white/15 bg-slate-950/85 p-4 text-white shadow-2xl backdrop-blur-xl">
+      <div onPointerDown={startToolDrag} className="flex cursor-move items-start justify-between gap-3 rounded-[1rem] border border-white/10 bg-white/5 p-3">
         <div>
           <p className="font-serif-display text-xl text-amber-200">Live Hero Edit</p>
           <p className="mt-1 text-xs text-white/60">{viewport.width} x {viewport.height}</p>
         </div>
-        <button onClick={() => setShowGrid((value) => !value)} className={`rounded-full px-3 py-1.5 text-xs font-semibold ${showGrid ? "bg-amber-500 text-slate-950" : "bg-white/10 text-white"}`}>
-          Grid
-        </button>
+        <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/80">Drag</span>
       </div>
       <div className="mt-4 space-y-4">
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={() => setShowGrid((value) => !value)} className={`rounded-full px-3 py-2 text-xs font-semibold ${showGrid ? "bg-amber-500 text-slate-950" : "bg-white/10 text-white"}`}>
+            Grid
+          </button>
+          <button onClick={() => setToolsHidden(true)} className="rounded-full bg-white/10 px-3 py-2 text-xs font-semibold text-white">
+            Hide Tools
+          </button>
+        </div>
         <RangeInput dark label="Text X" value={draft.text_position_x} onChange={(value) => update("text_position_x", value)} />
         <RangeInput dark label="Text Y" value={draft.text_position_y} onChange={(value) => update("text_position_y", value)} />
         <RangeInput dark label="Heading size" min={42} max={116} value={draft.heading_font_size} onChange={(value) => update("heading_font_size", value)} />
@@ -362,11 +398,19 @@ function HeroEditor({ item, onClose, onSave }) {
       {finalPreview ? (
         <div className="fixed inset-0 z-[140] bg-slate-950">
           {renderHeroPreview({ fullscreen: true })}
-          <div className="absolute right-4 top-4 flex flex-col items-end gap-3 sm:right-6 sm:top-6">
-            <button onClick={() => setFinalPreview(false)} className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 shadow-xl">
+          <div className="absolute z-[150] flex flex-col items-start gap-3" style={{ left: toolPosition.x, top: toolPosition.y }}>
+            <div className="flex gap-2 rounded-full border border-white/15 bg-slate-950/80 p-1.5 shadow-2xl backdrop-blur-xl">
+              <button onPointerDown={startToolDrag} className="cursor-move rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white">
+                Drag
+              </button>
+              <button onClick={() => setFinalPreview(false)} className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900">
               Back to Editor
             </button>
-            {previewTools}
+              <button onClick={() => setToolsHidden((value) => !value)} className="rounded-full bg-amber-500 px-5 py-2 text-sm font-semibold text-slate-950">
+                {toolsHidden ? "Show Tools" : "Hide Tools"}
+              </button>
+            </div>
+            {toolsHidden ? null : previewTools}
           </div>
         </div>
       ) : null}
