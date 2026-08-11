@@ -156,6 +156,18 @@ def _delete_file(instance):
         instance.image.delete(save=False)
 
 
+def _save_image_instance(instance):
+    try:
+        instance.save()
+    except Exception as exc:
+        return f"Image could not be saved. Check that media storage is configured and writable. Details: {exc}"
+
+    if instance.image and not instance.image.storage.exists(instance.image.name):
+        return "Image record was saved, but the uploaded file was not found in media storage."
+
+    return None
+
+
 def _managed_images(request, model, payload_fn, fields):
     if request.method == "GET":
         queryset, error = _queryset_for_request(request, model)
@@ -182,7 +194,9 @@ def _managed_images(request, model, payload_fn, fields):
 
     instance = model(image=uploaded_file, display_order=_int_value(data.get("display_order"), _next_order(model)))
     _apply_fields(instance, data, fields)
-    instance.save()
+    save_error = _save_image_instance(instance)
+    if save_error:
+        return JsonResponse({"error": save_error}, status=500)
     return JsonResponse(payload_fn(instance), status=201)
 
 
@@ -215,7 +229,9 @@ def _managed_image_detail(request, model, payload_fn, fields, pk):
             instance.image = uploaded_file
 
         _apply_fields(instance, data, fields)
-        instance.save()
+        save_error = _save_image_instance(instance)
+        if save_error:
+            return JsonResponse({"error": save_error}, status=500)
 
         if uploaded_file and storage and old_image_name and old_image_name != instance.image.name:
             storage.delete(old_image_name)
@@ -344,7 +360,9 @@ def gallery_images(request):
             title=data.get("title", uploaded_file.name),
             image=uploaded_file,
         )
-        instance.save()
+        save_error = _save_image_instance(instance)
+        if save_error:
+            return JsonResponse({"error": save_error}, status=500)
         return JsonResponse(_gallery_payload(instance), status=201)
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
@@ -381,7 +399,9 @@ def gallery_image_detail(request, pk):
 
         instance.title = data.get("title", instance.title)
         instance.section = data.get("section", instance.section)
-        instance.save()
+        save_error = _save_image_instance(instance)
+        if save_error:
+            return JsonResponse({"error": save_error}, status=500)
 
         if uploaded_file and storage and old_image_name and old_image_name != instance.image.name:
             storage.delete(old_image_name)

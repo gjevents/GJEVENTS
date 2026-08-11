@@ -62,6 +62,13 @@ const validateFile = (file) => {
 
 const makePayload = (item) => ({ ...item, image: mediaUrl(item.image) });
 
+const ensureSavedImagePayload = (payload) => {
+  if (!payload?.id || !payload?.image) {
+    throw new Error("The backend accepted the request but did not return a saved image URL.");
+  }
+  return makePayload(payload);
+};
+
 function CmsUploadPanel({ title, count, selectedFile, preview, uploading, uploadProgress, onFile, onUpload, maxCount = MAX_MANAGED_IMAGES }) {
   const hasLimit = Number.isFinite(maxCount);
   const isLimitReached = hasLimit && count >= maxCount;
@@ -90,7 +97,7 @@ function CmsUploadPanel({ title, count, selectedFile, preview, uploading, upload
           </div>
           <div className="mt-4 flex items-center justify-between gap-3 text-sm text-slate-200">
             <span>{selectedFile?.name}</span>
-            <span className="rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em]">Preview ready</span>
+            <span className="rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em]">Not saved yet</span>
           </div>
         </div>
       ) : (
@@ -479,7 +486,7 @@ function ManagedSection({ type }) {
     setUploadProgress(0);
     try {
       const headers = await csrfHeaders();
-      await new Promise((resolve, reject) => {
+      const savedItem = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", apiUrl(endpoint));
         xhr.withCredentials = apiCredentials === "include";
@@ -497,6 +504,7 @@ function ManagedSection({ type }) {
         xhr.onerror = () => reject(new Error("Network error while uploading."));
         xhr.send(formData);
       });
+      ensureSavedImagePayload(savedItem);
       toast({ title: "Image uploaded", description: "The image is now available for this section.", variant: "default" });
       setSelectedFile(null);
       preview && URL.revokeObjectURL(preview);
@@ -709,7 +717,7 @@ function GalleryTab() {
           const payload = xhr.responseText ? JSON.parse(xhr.responseText) : {};
           if (xhr.status >= 200 && xhr.status < 300) {
             toast({ title: successTitle, description: successMessage, variant: "default" });
-            resolve(makePayload(payload));
+            resolve(ensureSavedImagePayload(payload));
           } else {
             toast({ title: errorTitle, description: payload.error || errorMessage, variant: "destructive" });
             reject(new Error(payload.error || errorMessage));
