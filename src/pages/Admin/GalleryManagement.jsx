@@ -9,6 +9,20 @@ import { apiCredentials, apiUrl, csrfHeaders, mediaUrl } from "@/lib/siteApi";
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
+const parseResponsePayload = async (response) => {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(
+      response.ok
+        ? "The server returned an unexpected response."
+        : "The gallery backend is not available or returned an HTML page. Check the API backend URL and staff login."
+    );
+  }
+};
+
 const formatDate = (value) => {
   if (!value) return "—";
   const date = new Date(value);
@@ -94,15 +108,22 @@ export default function GalleryManagement() {
         }
       });
       xhr.onload = () => {
-        const payload = xhr.responseText ? JSON.parse(xhr.responseText) : {};
-        if (xhr.status >= 200 && xhr.status < 300) {
-          toast({ title: successTitle, description: successMessage, variant: "default" });
-          resolve({ ...payload, image: mediaUrl(payload.image) });
-        } else {
-          toast({ title: errorTitle, description: payload.error || errorMessage, variant: "destructive" });
-          reject(new Error(payload.error || errorMessage));
+        try {
+          const payload = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+          if (xhr.status >= 200 && xhr.status < 300) {
+            toast({ title: successTitle, description: successMessage, variant: "default" });
+            resolve({ ...payload, image: mediaUrl(payload.image) });
+          } else {
+            toast({ title: errorTitle, description: payload.error || errorMessage, variant: "destructive" });
+            reject(new Error(payload.error || errorMessage));
+          }
+        } catch {
+          const message = "The gallery backend returned an unexpected response. Check the API backend URL and staff login.";
+          toast({ title: errorTitle, description: message, variant: "destructive" });
+          reject(new Error(message));
+        } finally {
+          setUploading(false);
         }
-        setUploading(false);
       };
       xhr.onerror = () => {
         toast({ title: errorTitle, description: errorMessage, variant: "destructive" });
@@ -161,7 +182,7 @@ export default function GalleryManagement() {
         credentials: apiCredentials,
         headers: csrfHeaders(),
       });
-      const payload = await response.json();
+      const payload = await parseResponsePayload(response);
       if (!response.ok) throw new Error(payload.error || "Delete failed");
       setImages((current) => current.filter((item) => item.id !== imageId));
       toast({ title: "Image removed", description: "The gallery image has been deleted.", variant: "default" });

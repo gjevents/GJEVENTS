@@ -1,4 +1,4 @@
-const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
+const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL || "https://gjevents-backend.onrender.com";
 
 export const apiBaseUrl = rawApiBaseUrl.replace(/\/$/, "");
 
