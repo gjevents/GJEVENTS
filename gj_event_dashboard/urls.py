@@ -51,3 +51,8 @@ urlpatterns = [
     path("sitemap.xml", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist"), "path": "sitemap.xml"}),
     re_path(r"^(?!admin).*$", ReactAppView.as_view()),
 ]
+
+handler400 = "gj_event_dashboard.error_views.bad_request"
+handler403 = "gj_event_dashboard.error_views.permission_denied"
+handler404 = "gj_event_dashboard.error_views.page_not_found"
+handler500 = "gj_event_dashboard.error_views.server_error"

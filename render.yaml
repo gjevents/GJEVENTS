@@ -20,6 +20,8 @@ services:
         value: https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io
       - key: DJANGO_MEDIA_ROOT
         value: /opt/render/project/src/media
+      - key: DJANGO_SQLITE_PATH
+        value: /opt/render/project/src/media/db.sqlite3
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: PYTHON_VERSION

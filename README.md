@@ -31,23 +31,33 @@ GitHub Pages is static, so uploaded photos cannot be saved directly inside GitHu
 
 Recommended setup:
 
-1. Deploy this repository as a Django web service.
+1. Deploy this repository as a Django web service on Render.
 2. Set backend environment variables:
    - `DJANGO_DEBUG=False`
    - `DJANGO_SECRET_KEY=<secure random value>`
-   - `DJANGO_ALLOWED_HOSTS=<backend-domain>,gjevents.in,www.gjevents.in`
-   - `DJANGO_CSRF_TRUSTED_ORIGINS=https://<backend-domain>,https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io`
+   - `DJANGO_ALLOWED_HOSTS=gjevents-backend.onrender.com,gjevents.in,www.gjevents.in`
+   - `DJANGO_CSRF_TRUSTED_ORIGINS=https://gjevents-backend.onrender.com,https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io`
    - `DJANGO_CORS_ALLOWED_ORIGINS=https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io`
-   - `DJANGO_MEDIA_ROOT=<persistent media folder>`
+   - `DJANGO_MEDIA_ROOT=/opt/render/project/src/media`
+   - `DJANGO_SQLITE_PATH=/opt/render/project/src/media/db.sqlite3`
 3. Add this GitHub Actions repository variable:
-   - `VITE_API_BASE_URL=https://<backend-domain>`
+   - `VITE_API_BASE_URL=https://gjevents-backend.onrender.com`
 4. Re-run the GitHub Pages workflow.
 
 Client flow after deployment:
 
 ```text
-https://<backend-domain>/admin/login/
-https://gjevents.github.io/GJEVENTS/admin/gallery
+https://gjevents-backend.onrender.com/admin/login/
+https://gjevents.in/admin/gallery
 ```
 
 After login, uploaded images are saved on the live backend and the public gallery reads them from the backend API.
+
+Push changes:
+
+```powershell
+git status
+git add .
+git commit -m "Fix gallery backend integration"
+git push origin main
+```

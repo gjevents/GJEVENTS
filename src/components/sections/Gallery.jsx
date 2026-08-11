@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X, ZoomIn } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { Skeleton } from "@/components/ui/skeleton";
-import { apiUrl, mediaUrl } from "@/lib/siteApi";
+import { apiUrl, mediaUrl, parseApiResponse } from "@/lib/siteApi";
 
 export default function Gallery() {
   const [active, setActive] = useState(null);
@@ -14,8 +14,8 @@ export default function Gallery() {
     const loadGallery = async () => {
       try {
         const response = await fetch(apiUrl("/api/gallery/"));
-        if (!response.ok) throw new Error("Unable to load gallery");
-        const payload = await response.json();
+        const payload = await parseApiResponse(response, "Unable to load gallery because the backend returned HTML instead of JSON.");
+        if (!response.ok) throw new Error(payload.error || `Unable to load gallery. HTTP status: ${response.status}.`);
         setImages(payload.map((item) => ({ ...item, image: mediaUrl(item.image) })));
       } catch (error) {
         console.error(error);

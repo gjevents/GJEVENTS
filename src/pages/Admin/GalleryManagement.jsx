@@ -4,24 +4,10 @@ import { AlertCircle, CheckCircle2, ImagePlus, Loader2, RefreshCw, Trash2, Uploa
 import { toast } from "@/components/ui/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { apiCredentials, apiUrl, csrfHeaders, mediaUrl } from "@/lib/siteApi";
+import { apiCredentials, apiUrl, csrfHeaders, mediaUrl, parseApiResponse } from "@/lib/siteApi";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-
-const parseResponsePayload = async (response) => {
-  const text = await response.text();
-  if (!text) return {};
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw new Error(
-      response.ok
-        ? "The server returned an unexpected response."
-        : "The gallery backend is not available or returned an HTML page. Check the API backend URL and staff login."
-    );
-  }
-};
 
 const formatDate = (value) => {
   if (!value) return "—";
@@ -43,8 +29,8 @@ export default function GalleryManagement() {
     setLoading(true);
     try {
       const response = await fetch(apiUrl("/api/gallery/"), { credentials: apiCredentials });
-      if (!response.ok) throw new Error("Unable to load gallery images");
-      const payload = await response.json();
+      const payload = await parseApiResponse(response, "Gallery load failed because the backend returned HTML instead of JSON.");
+      if (!response.ok) throw new Error(payload.error || `Unable to load gallery images. HTTP status: ${response.status}.`);
       setImages(payload.map((item) => ({ ...item, image: mediaUrl(item.image) })));
     } catch (error) {
       toast({ title: "Gallery load failed", description: error.message, variant: "destructive" });
@@ -97,11 +83,21 @@ export default function GalleryManagement() {
     setUploading(true);
     setUploadProgress(0);
 
+    let headers = {};
+    try {
+      headers = await csrfHeaders();
+    } catch (error) {
+      toast({ title: errorTitle, description: error.message, variant: "destructive" });
+      setUploading(false);
+      throw error;
+    }
+
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open(method, apiUrl(endpoint));
+      const requestUrl = apiUrl(endpoint);
+      xhr.open(method, requestUrl);
       xhr.withCredentials = apiCredentials === "include";
-      Object.entries(csrfHeaders()).forEach(([header, value]) => xhr.setRequestHeader(header, value));
+      Object.entries(headers).forEach(([header, value]) => xhr.setRequestHeader(header, value));
       xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable) {
           setUploadProgress(Math.round((event.loaded / event.total) * 100));
@@ -118,7 +114,7 @@ export default function GalleryManagement() {
             reject(new Error(payload.error || errorMessage));
           }
         } catch {
-          const message = "The gallery backend returned an unexpected response. Check the API backend URL and staff login.";
+          const message = `The gallery backend returned an unexpected response. URL: ${requestUrl}. HTTP status: ${xhr.status}. Check the API backend URL and staff login.`;
           toast({ title: errorTitle, description: message, variant: "destructive" });
           reject(new Error(message));
         } finally {
@@ -177,13 +173,14 @@ export default function GalleryManagement() {
 
   const deleteImage = async (imageId) => {
     try {
+      const headers = await csrfHeaders();
       const response = await fetch(apiUrl(`/api/gallery/${imageId}/`), {
         method: "DELETE",
         credentials: apiCredentials,
-        headers: csrfHeaders(),
+        headers,
       });
-      const payload = await parseResponsePayload(response);
-      if (!response.ok) throw new Error(payload.error || "Delete failed");
+      const payload = await parseApiResponse(response, "Delete failed because the backend returned HTML instead of JSON.");
+      if (!response.ok) throw new Error(payload.error || `Delete failed. HTTP status: ${response.status}.`);
       setImages((current) => current.filter((item) => item.id !== imageId));
       toast({ title: "Image removed", description: "The gallery image has been deleted.", variant: "default" });
     } catch (error) {

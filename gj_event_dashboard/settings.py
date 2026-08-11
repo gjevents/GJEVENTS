@@ -71,9 +71,12 @@ if DATABASE_URL and not dj_database_url:
     raise RuntimeError("DATABASE_URL requires dj-database-url. Install requirements.txt first.")
 
 DATABASES = {
-    "default": dj_database_url.config(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}", conn_max_age=600)
+    "default": dj_database_url.config(
+        default=f"sqlite:///{os.environ.get('DJANGO_SQLITE_PATH', BASE_DIR / 'db.sqlite3')}",
+        conn_max_age=600,
+    )
     if DATABASE_URL
-    else {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}
+    else {"ENGINE": "django.db.backends.sqlite3", "NAME": os.environ.get("DJANGO_SQLITE_PATH", BASE_DIR / "db.sqlite3")}
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -121,6 +124,7 @@ SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SAMESITE = os.environ.get("DJANGO_SESSION_COOKIE_SAMESITE", "None" if not DEBUG else "Lax")
 CSRF_COOKIE_SAMESITE = os.environ.get("DJANGO_CSRF_COOKIE_SAMESITE", "None" if not DEBUG else "Lax")
+CSRF_FAILURE_VIEW = "gj_event_dashboard.error_views.csrf_failure"
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = "same-origin"
 X_FRAME_OPTIONS = "DENY"
