@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useInView, useScroll, useTransform } from "framer-motion";
 import { ShieldCheck, Sparkles, Eye, Users } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { ABOUT_IMAGE } from "@/utils/constants";
+import { apiUrl, mediaUrl, parseApiResponse } from "@/lib/siteApi";
+
+const ROTATE_MS = 4200;
 
 const PILLARS = [
   { icon: Eye, title: "Our Vision", text: "To redefine how India experiences events — blending heritage with world-class technology." },
@@ -46,8 +49,32 @@ function Counter({ value, suffix }) {
 
 export default function About() {
   const imgRef = useRef(null);
+  const [images, setImages] = useState([{ id: "fallback", image: ABOUT_IMAGE }]);
+  const [imageIndex, setImageIndex] = useState(0);
   const { scrollYProgress } = useScroll({ target: imgRef, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+
+  useEffect(() => {
+    const loadImages = async () => {
+      try {
+        const response = await fetch(apiUrl("/api/about-images/"));
+        const payload = await parseApiResponse(response, "Unable to load about images.");
+        if (response.ok && payload.length) {
+          setImages(payload.map((item) => ({ ...item, image: mediaUrl(item.image) })));
+          setImageIndex(0);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    loadImages();
+  }, []);
+
+  useEffect(() => {
+    if (images.length <= 1) return undefined;
+    const timer = setInterval(() => setImageIndex((current) => (current + 1) % images.length), ROTATE_MS);
+    return () => clearInterval(timer);
+  }, [images.length]);
 
   return (
     <section id="about" className="relative mx-auto max-w-[120rem] px-6 py-28 md:px-12 md:py-40">
@@ -65,12 +92,19 @@ export default function About() {
       <div className="mt-20 grid items-center gap-16 lg:grid-cols-2">
         {/* Image with parallax */}
         <div ref={imgRef} className="relative overflow-hidden rounded-3xl premium-shadow">
-          <motion.img
-            style={{ y, scale: 1.12 }}
-            src={ABOUT_IMAGE}
-            alt="GJ Events luxury event setup"
-            className="h-[34rem] w-full object-cover"
-          />
+          <AnimatePresence mode="sync">
+            <motion.img
+              key={images[imageIndex]?.id || "fallback"}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1, ease: "easeInOut" }}
+              style={{ y, scale: 1.12 }}
+              src={images[imageIndex]?.image || ABOUT_IMAGE}
+              alt="GJ Events luxury event setup"
+              className="h-[34rem] w-full object-cover"
+            />
+          </AnimatePresence>
           <div className="absolute inset-0 bg-gradient-to-t from-inkbrown/60 to-transparent" />
           <div className="absolute bottom-6 left-6 right-6 glass-card rounded-2xl p-5">
             <p className="font-heading text-xl text-royal">Crafting moments worth a crore.</p>

@@ -7,7 +7,7 @@ from django.test.client import BOUNDARY, MULTIPART_CONTENT, encode_multipart
 from django.urls import reverse
 from PIL import Image
 
-from .models import GalleryImage
+from .models import AboutImage, GalleryImage, HeroSlide
 
 
 class GalleryImageAPITests(TestCase):
@@ -128,3 +128,109 @@ class GalleryImageAPITests(TestCase):
         payload = response.json()
         self.assertEqual(payload["section"], "Updated")
         self.assertEqual(payload["title"], "Replacement")
+
+
+class ManagedImageAPITests(TestCase):
+    def setUp(self):
+        self.staff_user = get_user_model().objects.create_user(
+            username="cms-admin",
+            email="cms-admin@example.com",
+            password="test-password-123",
+            is_staff=True,
+        )
+
+    def create_test_image(self, name="managed.png", color="gold"):
+        image_file = BytesIO()
+        Image.new("RGB", (200, 200), color=color).save(image_file, format="PNG")
+        image_file.seek(0)
+        return SimpleUploadedFile(name, image_file.read(), content_type="image/png")
+
+    def test_public_hero_slides_return_active_items_only(self):
+        HeroSlide.objects.create(
+            image=self.create_test_image("active.png"),
+            is_active=True,
+            display_order=2,
+            heading_line_1="Active slide",
+        )
+        HeroSlide.objects.create(
+            image=self.create_test_image("disabled.png", "orange"),
+            is_active=False,
+            display_order=1,
+            heading_line_1="Disabled slide",
+        )
+
+        response = self.client.get(reverse("hero-slide-list"))
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(len(payload), 1)
+        self.assertEqual(payload[0]["heading_line_1"], "Active slide")
+
+    def test_create_hero_slide_requires_staff(self):
+        response = self.client.post(
+            reverse("hero-slide-list"),
+            {"image": self.create_test_image()},
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.json()["error"], "Staff access is required.")
+
+    def test_hero_slide_upload_limit_is_ten(self):
+        self.client.force_login(self.staff_user)
+        for index in range(10):
+            HeroSlide.objects.create(
+                image=self.create_test_image(f"slide-{index}.png"),
+                display_order=index + 1,
+            )
+
+        response = self.client.post(
+            reverse("hero-slide-list"),
+            {"image": self.create_test_image("extra.png")},
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("Maximum 10", response.json()["error"])
+
+    def test_patch_hero_slide_settings_persists(self):
+        self.client.force_login(self.staff_user)
+        slide = HeroSlide.objects.create(image=self.create_test_image(), heading_line_1="Old")
+
+        response = self.client.patch(
+            reverse("hero-slide-detail", args=[slide.id]),
+            encode_multipart(
+                BOUNDARY,
+                {
+                    "heading_line_1": "New heading",
+                    "text_alignment": "right",
+                    "text_position_x": "88",
+                    "is_active": "false",
+                },
+            ),
+            content_type=MULTIPART_CONTENT,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["heading_line_1"], "New heading")
+        self.assertEqual(payload["text_alignment"], "right")
+        self.assertEqual(payload["text_position_x"], 88)
+        self.assertFalse(payload["is_active"])
+
+    def test_about_images_upload_limit_is_ten(self):
+        self.client.force_login(self.staff_user)
+        for index in range(10):
+            AboutImage.objects.create(
+                image=self.create_test_image(f"about-{index}.png"),
+                display_order=index + 1,
+            )
+
+        response = self.client.post(
+            reverse("about-image-list"),
+            {"image": self.create_test_image("extra-about.png")},
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("Maximum 10", response.json()["error"])
