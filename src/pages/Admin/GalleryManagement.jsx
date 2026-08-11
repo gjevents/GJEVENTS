@@ -151,10 +151,27 @@ function HeroEditor({ item, onClose, onSave }) {
   const [previewMode, setPreviewMode] = useState("desktop");
   const [showGrid, setShowGrid] = useState(true);
   const [finalPreview, setFinalPreview] = useState(false);
+  const [viewport, setViewport] = useState({ width: 1440, height: 820 });
   const previewRef = useRef(null);
   const activePreview = HERO_PREVIEW_MODES.find((mode) => mode.id === previewMode) || HERO_PREVIEW_MODES[0];
+  const previewRatio = previewMode === "desktop" ? `${viewport.width} / ${viewport.height}` : activePreview.ratio;
   const alignItems = draft.text_alignment === "left" ? "flex-start" : draft.text_alignment === "right" ? "flex-end" : "center";
   const update = (field, value) => setDraft((current) => ({ ...current, [field]: value }));
+
+  useEffect(() => {
+    const setSize = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
+    setSize();
+    window.addEventListener("resize", setSize);
+    return () => window.removeEventListener("resize", setSize);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = finalPreview ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [finalPreview]);
+
   const handlePointer = (event) => {
     const rect = previewRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -170,6 +187,60 @@ function HeroEditor({ item, onClose, onSave }) {
       setSaving(false);
     }
   };
+  const renderHeroPreview = ({ fullscreen = false } = {}) => (
+    <div
+      ref={fullscreen ? null : previewRef}
+      onPointerDown={fullscreen ? undefined : handlePointer}
+      onPointerMove={fullscreen ? undefined : (event) => event.buttons === 1 && handlePointer(event)}
+      className={`relative overflow-hidden bg-slate-900 ${fullscreen ? "h-[100svh] w-screen" : "mx-auto w-full cursor-crosshair rounded-[1.15rem]"}`}
+      style={fullscreen ? undefined : { aspectRatio: previewRatio }}
+    >
+      <img
+        src={draft.image}
+        alt="Hero editor preview"
+        className="h-full w-full object-cover"
+        style={{
+          objectPosition: `${draft.image_position_x}% ${draft.image_position_y}%`,
+          transform: `scale(${draft.image_zoom / 100})`,
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-inkbrown/70 via-inkbrown/55 to-inkbrown/85" />
+      {showGrid && !fullscreen ? (
+        <div className="pointer-events-none absolute inset-0">
+          <span className="absolute left-1/3 top-0 h-full w-px bg-white/30" />
+          <span className="absolute left-2/3 top-0 h-full w-px bg-white/30" />
+          <span className="absolute left-0 top-1/3 h-px w-full bg-white/30" />
+          <span className="absolute left-0 top-2/3 h-px w-full bg-white/30" />
+          <span className="absolute inset-6 rounded-[1rem] border border-dashed border-white/25" />
+        </div>
+      ) : null}
+      <div
+        className="absolute flex max-w-[86%] flex-col"
+        style={{
+          left: `${draft.text_position_x}%`,
+          top: `${draft.text_position_y}%`,
+          transform: "translate(-50%, -50%)",
+          textAlign: draft.text_alignment,
+          alignItems,
+        }}
+      >
+        <p className="mb-4 uppercase tracking-[0.35em] drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)]" style={{ color: draft.label_color, fontSize: `clamp(10px, ${draft.label_font_size / 14}vw, ${draft.label_font_size}px)` }}>{draft.label_text}</p>
+        <h3 className="font-heading font-bold leading-[1.05] drop-shadow-[0_4px_22px_rgba(0,0,0,0.55)]" style={{ color: draft.heading_color, fontSize: `clamp(34px, ${draft.heading_font_size / 16}vw, ${draft.heading_font_size}px)` }}>
+          {draft.heading_line_1}<br /><span style={{ color: draft.secondary_heading_color, WebkitTextFillColor: draft.secondary_heading_color }}>{draft.heading_line_2}</span>
+        </h3>
+        <p className="mt-5 max-w-2xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)]" style={{ color: draft.description_color, fontSize: `clamp(12px, ${draft.description_font_size / 18}vw, ${draft.description_font_size}px)` }}>{draft.description}</p>
+        <div className="mt-8 flex flex-wrap gap-4" style={{ justifyContent: draft.text_alignment === "left" ? "flex-start" : draft.text_alignment === "right" ? "flex-end" : "center" }}>
+          <span className="rounded-full border border-golden/50 px-6 py-3 text-xs uppercase tracking-[0.18em] text-cream">{draft.button_1_text}</span>
+          <span className="rounded-full px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: draft.button_text_color, background: draft.button_background_color }}>{draft.button_2_text}</span>
+        </div>
+      </div>
+      {!fullscreen ? (
+        <div className="pointer-events-none absolute bottom-4 left-4 rounded-full bg-slate-950/75 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white">
+          {previewMode === "desktop" ? `${viewport.width} x ${viewport.height}` : activePreview.label} hero preview
+        </div>
+      ) : null}
+    </div>
+  );
 
   return (
     <div className="fixed inset-0 z-[120] overflow-y-auto bg-slate-950/75 p-4 backdrop-blur-sm">
@@ -196,50 +267,14 @@ function HeroEditor({ item, onClose, onSave }) {
                 <button onClick={() => setShowGrid((value) => !value)} className={`rounded-full px-4 py-2 text-sm font-semibold ${showGrid ? "bg-slate-900 text-white" : "bg-white text-slate-700"}`}>
                   Grid
                 </button>
-                <button onClick={() => setFinalPreview((value) => !value)} className={`rounded-full px-4 py-2 text-sm font-semibold ${finalPreview ? "bg-emerald-600 text-white" : "bg-white text-slate-700"}`}>
+                <button onClick={() => setFinalPreview(true)} className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700">
                   Final Preview
                 </button>
               </div>
             </div>
 
             <div className="rounded-[1.5rem] border border-slate-200 bg-slate-950 p-3 shadow-2xl">
-              <div ref={previewRef} onPointerDown={handlePointer} onPointerMove={(event) => event.buttons === 1 && handlePointer(event)} className="relative mx-auto max-h-[70vh] cursor-crosshair overflow-hidden rounded-[1.15rem] bg-slate-900" style={{ aspectRatio: activePreview.ratio }}>
-              <img
-                src={draft.image}
-                alt="Hero editor preview"
-                className="h-full w-full object-cover"
-                style={{
-                  objectPosition: `${draft.image_position_x}% ${draft.image_position_y}%`,
-                  transform: `scale(${draft.image_zoom / 100})`,
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-inkbrown/70 via-inkbrown/55 to-inkbrown/85" />
-              {showGrid && !finalPreview ? (
-                <div className="pointer-events-none absolute inset-0">
-                  <span className="absolute left-1/3 top-0 h-full w-px bg-white/30" />
-                  <span className="absolute left-2/3 top-0 h-full w-px bg-white/30" />
-                  <span className="absolute left-0 top-1/3 h-px w-full bg-white/30" />
-                  <span className="absolute left-0 top-2/3 h-px w-full bg-white/30" />
-                  <span className="absolute inset-6 rounded-[1rem] border border-dashed border-white/25" />
-                </div>
-              ) : null}
-              <div className="absolute flex max-w-[86%] flex-col" style={{ left: `${draft.text_position_x}%`, top: `${draft.text_position_y}%`, transform: "translate(-50%, -50%)", textAlign: draft.text_alignment, alignItems }}>
-                <p className="mb-4 uppercase tracking-[0.35em] drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)]" style={{ color: draft.label_color, fontSize: `clamp(10px, ${draft.label_font_size / 14}vw, ${draft.label_font_size}px)` }}>{draft.label_text}</p>
-                <h3 className="font-heading font-bold leading-[1.05] drop-shadow-[0_4px_22px_rgba(0,0,0,0.55)]" style={{ color: draft.heading_color, fontSize: `clamp(34px, ${draft.heading_font_size / 16}vw, ${draft.heading_font_size}px)` }}>
-                  {draft.heading_line_1}<br /><span style={{ color: draft.secondary_heading_color, WebkitTextFillColor: draft.secondary_heading_color }}>{draft.heading_line_2}</span>
-                </h3>
-                <p className="mt-5 max-w-2xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)]" style={{ color: draft.description_color, fontSize: `clamp(12px, ${draft.description_font_size / 18}vw, ${draft.description_font_size}px)` }}>{draft.description}</p>
-                <div className="mt-8 flex flex-wrap gap-4" style={{ justifyContent: draft.text_alignment === "left" ? "flex-start" : draft.text_alignment === "right" ? "flex-end" : "center" }}>
-                  <span className="rounded-full border border-golden/50 px-6 py-3 text-xs uppercase tracking-[0.18em] text-cream">{draft.button_1_text}</span>
-                  <span className="rounded-full px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: draft.button_text_color, background: draft.button_background_color }}>{draft.button_2_text}</span>
-                </div>
-              </div>
-              {!finalPreview ? (
-                <div className="pointer-events-none absolute bottom-4 left-4 rounded-full bg-slate-950/75 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white">
-                  {activePreview.label} banner preview
-                </div>
-              ) : null}
-              </div>
+              {renderHeroPreview()}
             </div>
             <div className="flex flex-wrap gap-3">
               <button onClick={() => setDraft((current) => ({ ...current, text_position_x: 50, text_position_y: 50 }))} className="rounded-full border border-amber-200 px-4 py-2 text-sm font-semibold text-amber-700">Reset Text</button>
@@ -291,6 +326,14 @@ function HeroEditor({ item, onClose, onSave }) {
           </div>
         </div>
       </motion.div>
+      {finalPreview ? (
+        <div className="fixed inset-0 z-[140] bg-slate-950">
+          {renderHeroPreview({ fullscreen: true })}
+          <button onClick={() => setFinalPreview(false)} className="absolute right-6 top-6 rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 shadow-xl">
+            Back to Editor
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
