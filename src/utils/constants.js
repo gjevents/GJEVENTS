@@ -1,6 +1,6 @@
 // Central configuration for GJ Events website.
 // B2B portal URL for the external portal experience.
-export const B2B_PORTAL_URL = "https://script.google.com/macros/s/AKfycbz1-Z90D4n_ZPPraFusIzBmaE6GXGHHuz6LV_XzADAAwkxefTvz34Y_WWGItLb5IjoV1w/exec";
+export const B2B_PORTAL_URL = "https://script.google.com/macros/s/AKfycbzm_iWhbPpnih3f8pt-AlQNHOrkctc-vwDyjtbxnKqjz9qLs7-dPnbJNQNP0k-JaOVE/exec";
 
 export const BRAND = {
   name: "GJ Events",
