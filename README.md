@@ -40,6 +40,9 @@ Recommended setup:
    - `DJANGO_CORS_ALLOWED_ORIGINS=https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io`
    - `DJANGO_MEDIA_ROOT=/opt/render/project/src/media`
    - `DJANGO_SQLITE_PATH=/opt/render/project/src/media/db.sqlite3`
+   - `DJANGO_SUPERUSER_USERNAME=<admin username>`
+   - `DJANGO_SUPERUSER_EMAIL=<admin email>`
+   - `DJANGO_SUPERUSER_PASSWORD=<admin password>`
 3. Add this GitHub Actions repository variable:
    - `VITE_API_BASE_URL=https://gjevents-bfjz.onrender.com`
 4. Re-run the GitHub Pages workflow.
