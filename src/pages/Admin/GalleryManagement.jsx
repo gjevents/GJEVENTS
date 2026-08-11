@@ -37,7 +37,16 @@ const HERO_DEFAULTS = {
   text_alignment: "center",
   text_position_x: 50,
   text_position_y: 50,
+  image_position_x: 50,
+  image_position_y: 50,
+  image_zoom: 105,
 };
+
+const HERO_PREVIEW_MODES = [
+  { id: "desktop", label: "Desktop", ratio: "16 / 9" },
+  { id: "mobile", label: "Mobile", ratio: "9 / 16" },
+  { id: "square", label: "Square", ratio: "1 / 1" },
+];
 
 const formatDate = (value) => {
   if (!value) return "-";
@@ -139,7 +148,12 @@ function RangeInput({ label, value, min = 0, max = 100, onChange }) {
 function HeroEditor({ item, onClose, onSave }) {
   const [draft, setDraft] = useState({ ...HERO_DEFAULTS, ...item });
   const [saving, setSaving] = useState(false);
+  const [previewMode, setPreviewMode] = useState("desktop");
+  const [showGrid, setShowGrid] = useState(true);
+  const [finalPreview, setFinalPreview] = useState(false);
   const previewRef = useRef(null);
+  const activePreview = HERO_PREVIEW_MODES.find((mode) => mode.id === previewMode) || HERO_PREVIEW_MODES[0];
+  const alignItems = draft.text_alignment === "left" ? "flex-start" : draft.text_alignment === "right" ? "flex-end" : "center";
   const update = (field, value) => setDraft((current) => ({ ...current, [field]: value }));
   const handlePointer = (event) => {
     const rect = previewRef.current?.getBoundingClientRect();
@@ -169,23 +183,68 @@ function HeroEditor({ item, onClose, onSave }) {
         </div>
 
         <div className="grid gap-6 p-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <div>
-            <div ref={previewRef} onPointerDown={handlePointer} onPointerMove={(event) => event.buttons === 1 && handlePointer(event)} className="relative h-[32rem] cursor-crosshair overflow-hidden rounded-[1.5rem] bg-slate-900">
-              <img src={draft.image} alt="Hero editor preview" className="h-full w-full object-cover opacity-80" />
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-amber-100 bg-amber-50/70 p-3">
+              <div className="flex flex-wrap gap-2">
+                {HERO_PREVIEW_MODES.map((mode) => (
+                  <button key={mode.id} onClick={() => setPreviewMode(mode.id)} className={`rounded-full px-4 py-2 text-sm font-semibold ${previewMode === mode.id ? "bg-amber-600 text-white" : "bg-white text-slate-700"}`}>
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => setShowGrid((value) => !value)} className={`rounded-full px-4 py-2 text-sm font-semibold ${showGrid ? "bg-slate-900 text-white" : "bg-white text-slate-700"}`}>
+                  Grid
+                </button>
+                <button onClick={() => setFinalPreview((value) => !value)} className={`rounded-full px-4 py-2 text-sm font-semibold ${finalPreview ? "bg-emerald-600 text-white" : "bg-white text-slate-700"}`}>
+                  Final Preview
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-950 p-3 shadow-2xl">
+              <div ref={previewRef} onPointerDown={handlePointer} onPointerMove={(event) => event.buttons === 1 && handlePointer(event)} className="relative mx-auto max-h-[70vh] cursor-crosshair overflow-hidden rounded-[1.15rem] bg-slate-900" style={{ aspectRatio: activePreview.ratio }}>
+              <img
+                src={draft.image}
+                alt="Hero editor preview"
+                className="h-full w-full object-cover"
+                style={{
+                  objectPosition: `${draft.image_position_x}% ${draft.image_position_y}%`,
+                  transform: `scale(${draft.image_zoom / 100})`,
+                }}
+              />
               <div className="absolute inset-0 bg-gradient-to-b from-inkbrown/70 via-inkbrown/55 to-inkbrown/85" />
-              <div className="absolute max-w-4xl" style={{ left: `${draft.text_position_x}%`, top: `${draft.text_position_y}%`, transform: "translate(-50%, -50%)", textAlign: draft.text_alignment }}>
-                <p className="mb-4 uppercase tracking-[0.35em]" style={{ color: draft.label_color, fontSize: `${draft.label_font_size}px` }}>{draft.label_text}</p>
-                <h3 className="font-heading font-bold leading-[1.05]" style={{ color: draft.heading_color, fontSize: `${draft.heading_font_size}px` }}>
-                  {draft.heading_line_1}<br /><span style={{ color: draft.secondary_heading_color }}>{draft.heading_line_2}</span>
+              {showGrid && !finalPreview ? (
+                <div className="pointer-events-none absolute inset-0">
+                  <span className="absolute left-1/3 top-0 h-full w-px bg-white/30" />
+                  <span className="absolute left-2/3 top-0 h-full w-px bg-white/30" />
+                  <span className="absolute left-0 top-1/3 h-px w-full bg-white/30" />
+                  <span className="absolute left-0 top-2/3 h-px w-full bg-white/30" />
+                  <span className="absolute inset-6 rounded-[1rem] border border-dashed border-white/25" />
+                </div>
+              ) : null}
+              <div className="absolute flex max-w-[86%] flex-col" style={{ left: `${draft.text_position_x}%`, top: `${draft.text_position_y}%`, transform: "translate(-50%, -50%)", textAlign: draft.text_alignment, alignItems }}>
+                <p className="mb-4 uppercase tracking-[0.35em] drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)]" style={{ color: draft.label_color, fontSize: `clamp(10px, ${draft.label_font_size / 14}vw, ${draft.label_font_size}px)` }}>{draft.label_text}</p>
+                <h3 className="font-heading font-bold leading-[1.05] drop-shadow-[0_4px_22px_rgba(0,0,0,0.55)]" style={{ color: draft.heading_color, fontSize: `clamp(34px, ${draft.heading_font_size / 16}vw, ${draft.heading_font_size}px)` }}>
+                  {draft.heading_line_1}<br /><span style={{ color: draft.secondary_heading_color, WebkitTextFillColor: draft.secondary_heading_color }}>{draft.heading_line_2}</span>
                 </h3>
-                <p className="mt-5" style={{ color: draft.description_color, fontSize: `${draft.description_font_size}px` }}>{draft.description}</p>
-                <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <p className="mt-5 max-w-2xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)]" style={{ color: draft.description_color, fontSize: `clamp(12px, ${draft.description_font_size / 18}vw, ${draft.description_font_size}px)` }}>{draft.description}</p>
+                <div className="mt-8 flex flex-wrap gap-4" style={{ justifyContent: draft.text_alignment === "left" ? "flex-start" : draft.text_alignment === "right" ? "flex-end" : "center" }}>
                   <span className="rounded-full border border-golden/50 px-6 py-3 text-xs uppercase tracking-[0.18em] text-cream">{draft.button_1_text}</span>
                   <span className="rounded-full px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: draft.button_text_color, background: draft.button_background_color }}>{draft.button_2_text}</span>
                 </div>
               </div>
+              {!finalPreview ? (
+                <div className="pointer-events-none absolute bottom-4 left-4 rounded-full bg-slate-950/75 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white">
+                  {activePreview.label} banner preview
+                </div>
+              ) : null}
+              </div>
             </div>
-            <button onClick={() => setDraft((current) => ({ ...current, text_position_x: 50, text_position_y: 50 }))} className="mt-4 rounded-full border border-amber-200 px-4 py-2 text-sm font-semibold text-amber-700">Reset Position</button>
+            <div className="flex flex-wrap gap-3">
+              <button onClick={() => setDraft((current) => ({ ...current, text_position_x: 50, text_position_y: 50 }))} className="rounded-full border border-amber-200 px-4 py-2 text-sm font-semibold text-amber-700">Reset Text</button>
+              <button onClick={() => setDraft((current) => ({ ...current, image_position_x: 50, image_position_y: 50, image_zoom: 105 }))} className="rounded-full border border-amber-200 px-4 py-2 text-sm font-semibold text-amber-700">Reset Image Fit</button>
+            </div>
           </div>
 
           <div className="max-h-[34rem] space-y-5 overflow-y-auto pr-2">
@@ -210,6 +269,14 @@ function HeroEditor({ item, onClose, onSave }) {
             <RangeInput label="Label font size" min={10} max={28} value={draft.label_font_size} onChange={(value) => update("label_font_size", value)} />
             <RangeInput label="Heading font size" min={42} max={116} value={draft.heading_font_size} onChange={(value) => update("heading_font_size", value)} />
             <RangeInput label="Description font size" min={12} max={30} value={draft.description_font_size} onChange={(value) => update("description_font_size", value)} />
+            <div className="rounded-2xl border border-amber-100 bg-amber-50/70 p-4">
+              <p className="mb-4 text-sm font-semibold text-amber-900">Image fit and crop</p>
+              <div className="space-y-4">
+                <RangeInput label="Image zoom" min={100} max={160} value={draft.image_zoom} onChange={(value) => update("image_zoom", value)} />
+                <RangeInput label="Image X position" value={draft.image_position_x} onChange={(value) => update("image_position_x", value)} />
+                <RangeInput label="Image Y position" value={draft.image_position_y} onChange={(value) => update("image_position_y", value)} />
+              </div>
+            </div>
             <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-slate-200">
               {["left", "center", "right"].map((align) => (
                 <button key={align} onClick={() => update("text_alignment", align)} className={`px-3 py-2 text-sm capitalize ${draft.text_alignment === align ? "bg-amber-600 text-white" : "bg-white text-slate-700"}`}>{align}</button>

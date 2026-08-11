@@ -42,6 +42,9 @@ class HeroSlide(models.Model):
     text_alignment = models.CharField(max_length=10, default="center")
     text_position_x = models.PositiveIntegerField(default=50)
     text_position_y = models.PositiveIntegerField(default=50)
+    image_position_x = models.PositiveIntegerField(default=50)
+    image_position_y = models.PositiveIntegerField(default=50)
+    image_zoom = models.PositiveIntegerField(default=105)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 

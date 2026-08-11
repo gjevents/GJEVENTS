@@ -38,6 +38,9 @@ HERO_FIELDS = {
     "text_alignment": "choice",
     "text_position_x": "int",
     "text_position_y": "int",
+    "image_position_x": "int",
+    "image_position_y": "int",
+    "image_zoom": "int",
 }
 ABOUT_FIELDS = {"is_active": "bool", "display_order": "int"}
 
@@ -79,8 +82,9 @@ def _apply_fields(instance, data, fields):
         if field_type == "bool":
             setattr(instance, field, _bool_value(value))
         elif field_type == "int":
-            max_value = 100 if field.startswith("text_position_") else None
-            setattr(instance, field, _int_value(value, getattr(instance, field), 0, max_value))
+            max_value = 160 if field == "image_zoom" else 100 if field.endswith("_position_x") or field.endswith("_position_y") else None
+            min_value = 100 if field == "image_zoom" else 0
+            setattr(instance, field, _int_value(value, getattr(instance, field), min_value, max_value))
         elif field_type == "choice":
             setattr(instance, field, value if value in {"left", "center", "right"} else "center")
         else:
@@ -113,6 +117,9 @@ def _hero_payload(instance):
         "text_alignment": instance.text_alignment,
         "text_position_x": instance.text_position_x,
         "text_position_y": instance.text_position_y,
+        "image_position_x": instance.image_position_x,
+        "image_position_y": instance.image_position_y,
+        "image_zoom": instance.image_zoom,
         "created_at": instance.created_at.isoformat(),
         "updated_at": instance.updated_at.isoformat(),
     }

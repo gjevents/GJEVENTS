@@ -71,6 +71,9 @@ const fallbackSlides = HERO_SLIDES.map((slide, index) => ({
   text_alignment: "center",
   text_position_x: 50,
   text_position_y: 50,
+  image_position_x: 50,
+  image_position_y: 50,
+  image_zoom: 105,
   display_order: index + 1,
 }));
 
@@ -101,6 +104,7 @@ export default function Hero() {
   }, [slides.length]);
 
   const slide = slides[index] || fallbackSlides[0];
+  const imageZoom = Math.max(100, Number(slide.image_zoom || 105));
   const handlePrimaryClick = () => {
     if (!slide.button_1_link || slide.button_1_link.startsWith("#")) {
       document.querySelector(slide.button_1_link || "#about")?.scrollIntoView({ behavior: "smooth" });
@@ -127,7 +131,11 @@ export default function Hero() {
                   <img
                     src={slide.image}
                     alt={`GJ Events ${slide.label_text}`}
-                    className="h-full w-full scale-105 object-cover animate-kenburns"
+                    className="h-full w-full object-cover"
+                    style={{
+                      objectPosition: `${slide.image_position_x || 50}% ${slide.image_position_y || 50}%`,
+                      transform: `scale(${imageZoom / 100})`,
+                    }}
                   />
                 </motion.div>
               )
@@ -171,12 +179,12 @@ export default function Hero() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="font-heading text-5xl font-bold leading-[1.05] text-cream sm:text-6xl md:text-7xl lg:text-8xl"
+          className="font-heading text-5xl font-bold leading-[1.05] text-cream drop-shadow-[0_4px_22px_rgba(0,0,0,0.55)] sm:text-6xl md:text-7xl lg:text-8xl"
           style={{ color: slide.heading_color, fontSize: `clamp(3rem, ${slide.heading_font_size / 16}vw, ${slide.heading_font_size}px)` }}
         >
           {slide.heading_line_1}
           <br />
-          <span className="text-gradient-gold" style={{ color: slide.secondary_heading_color, backgroundImage: "none" }}>{slide.heading_line_2}</span>
+          <span style={{ color: slide.secondary_heading_color, WebkitTextFillColor: slide.secondary_heading_color }}>{slide.heading_line_2}</span>
         </motion.h1>
 
         <motion.p

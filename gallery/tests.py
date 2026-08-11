@@ -205,6 +205,9 @@ class ManagedImageAPITests(TestCase):
                     "heading_line_1": "New heading",
                     "text_alignment": "right",
                     "text_position_x": "88",
+                    "image_position_x": "35",
+                    "image_position_y": "70",
+                    "image_zoom": "130",
                     "is_active": "false",
                 },
             ),
@@ -216,6 +219,9 @@ class ManagedImageAPITests(TestCase):
         self.assertEqual(payload["heading_line_1"], "New heading")
         self.assertEqual(payload["text_alignment"], "right")
         self.assertEqual(payload["text_position_x"], 88)
+        self.assertEqual(payload["image_position_x"], 35)
+        self.assertEqual(payload["image_position_y"], 70)
+        self.assertEqual(payload["image_zoom"], 130)
         self.assertFalse(payload["is_active"])
 
     def test_about_images_upload_limit_is_ten(self):
