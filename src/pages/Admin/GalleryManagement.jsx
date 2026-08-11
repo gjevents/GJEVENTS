@@ -136,9 +136,9 @@ function ColorInput({ label, value, onChange }) {
   );
 }
 
-function RangeInput({ label, value, min = 0, max = 100, onChange }) {
+function RangeInput({ label, value, min = 0, max = 100, onChange, dark = false }) {
   return (
-    <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
+    <label className={`flex flex-col gap-2 text-sm font-medium ${dark ? "text-white/85" : "text-slate-700"}`}>
       <span className="flex justify-between"><span>{label}</span><span>{value}</span></span>
       <input type="range" min={min} max={max} value={value} onChange={(event) => onChange(Number(event.target.value))} />
     </label>
@@ -189,10 +189,10 @@ function HeroEditor({ item, onClose, onSave }) {
   };
   const renderHeroPreview = ({ fullscreen = false } = {}) => (
     <div
-      ref={fullscreen ? null : previewRef}
-      onPointerDown={fullscreen ? undefined : handlePointer}
-      onPointerMove={fullscreen ? undefined : (event) => event.buttons === 1 && handlePointer(event)}
-      className={`relative overflow-hidden bg-slate-900 ${fullscreen ? "h-[100svh] w-screen" : "mx-auto w-full cursor-crosshair rounded-[1.15rem]"}`}
+      ref={previewRef}
+      onPointerDown={handlePointer}
+      onPointerMove={(event) => event.buttons === 1 && handlePointer(event)}
+      className={`relative cursor-crosshair overflow-hidden bg-slate-900 ${fullscreen ? "h-[100svh] w-screen" : "mx-auto w-full rounded-[1.15rem]"}`}
       style={fullscreen ? undefined : { aspectRatio: previewRatio }}
     >
       <img
@@ -205,7 +205,7 @@ function HeroEditor({ item, onClose, onSave }) {
         }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-inkbrown/70 via-inkbrown/55 to-inkbrown/85" />
-      {showGrid && !fullscreen ? (
+      {showGrid ? (
         <div className="pointer-events-none absolute inset-0">
           <span className="absolute left-1/3 top-0 h-full w-px bg-white/30" />
           <span className="absolute left-2/3 top-0 h-full w-px bg-white/30" />
@@ -234,11 +234,44 @@ function HeroEditor({ item, onClose, onSave }) {
           <span className="rounded-full px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: draft.button_text_color, background: draft.button_background_color }}>{draft.button_2_text}</span>
         </div>
       </div>
-      {!fullscreen ? (
-        <div className="pointer-events-none absolute bottom-4 left-4 rounded-full bg-slate-950/75 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white">
-          {previewMode === "desktop" ? `${viewport.width} x ${viewport.height}` : activePreview.label} hero preview
+      <div className="pointer-events-none absolute bottom-4 left-4 rounded-full bg-slate-950/75 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white">
+        {fullscreen ? `${viewport.width} x ${viewport.height} live edit preview` : previewMode === "desktop" ? `${viewport.width} x ${viewport.height} hero preview` : `${activePreview.label} hero preview`}
+      </div>
+    </div>
+  );
+  const previewTools = (
+    <div onPointerDown={(event) => event.stopPropagation()} onPointerMove={(event) => event.stopPropagation()} className="max-h-[calc(100svh-8rem)] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-[1.25rem] border border-white/15 bg-slate-950/85 p-4 text-white shadow-2xl backdrop-blur-xl">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="font-serif-display text-xl text-amber-200">Live Hero Edit</p>
+          <p className="mt-1 text-xs text-white/60">{viewport.width} x {viewport.height}</p>
         </div>
-      ) : null}
+        <button onClick={() => setShowGrid((value) => !value)} className={`rounded-full px-3 py-1.5 text-xs font-semibold ${showGrid ? "bg-amber-500 text-slate-950" : "bg-white/10 text-white"}`}>
+          Grid
+        </button>
+      </div>
+      <div className="mt-4 space-y-4">
+        <RangeInput dark label="Text X" value={draft.text_position_x} onChange={(value) => update("text_position_x", value)} />
+        <RangeInput dark label="Text Y" value={draft.text_position_y} onChange={(value) => update("text_position_y", value)} />
+        <RangeInput dark label="Heading size" min={42} max={116} value={draft.heading_font_size} onChange={(value) => update("heading_font_size", value)} />
+        <RangeInput dark label="Description size" min={12} max={30} value={draft.description_font_size} onChange={(value) => update("description_font_size", value)} />
+        <RangeInput dark label="Image zoom" min={100} max={160} value={draft.image_zoom} onChange={(value) => update("image_zoom", value)} />
+        <RangeInput dark label="Image X" value={draft.image_position_x} onChange={(value) => update("image_position_x", value)} />
+        <RangeInput dark label="Image Y" value={draft.image_position_y} onChange={(value) => update("image_position_y", value)} />
+        <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-white/15">
+          {["left", "center", "right"].map((align) => (
+            <button key={align} onClick={() => update("text_alignment", align)} className={`px-3 py-2 text-sm capitalize ${draft.text_alignment === align ? "bg-amber-500 text-slate-950" : "bg-white/10 text-white"}`}>{align}</button>
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={() => setDraft((current) => ({ ...current, text_position_x: 50, text_position_y: 50 }))} className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white">Reset Text</button>
+          <button onClick={() => setDraft((current) => ({ ...current, image_position_x: 50, image_position_y: 50, image_zoom: 105 }))} className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white">Reset Image</button>
+        </div>
+        <button onClick={save} disabled={saving} className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-amber-500 px-5 py-3 text-sm font-semibold text-slate-950 disabled:opacity-70">
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          Save Changes
+        </button>
+      </div>
     </div>
   );
 
@@ -329,9 +362,12 @@ function HeroEditor({ item, onClose, onSave }) {
       {finalPreview ? (
         <div className="fixed inset-0 z-[140] bg-slate-950">
           {renderHeroPreview({ fullscreen: true })}
-          <button onClick={() => setFinalPreview(false)} className="absolute right-6 top-6 rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 shadow-xl">
-            Back to Editor
-          </button>
+          <div className="absolute right-4 top-4 flex flex-col items-end gap-3 sm:right-6 sm:top-6">
+            <button onClick={() => setFinalPreview(false)} className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 shadow-xl">
+              Back to Editor
+            </button>
+            {previewTools}
+          </div>
         </div>
       ) : null}
     </div>
