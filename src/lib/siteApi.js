@@ -7,11 +7,14 @@ const isGitHubProjectPages = () =>
   window.location.hostname === "gjevents.github.io" &&
   window.location.pathname.toLowerCase().startsWith("/gjevents");
 
+const isStaticPublicSite = () =>
+  ["gjevents.in", "www.gjevents.in"].includes(window.location.hostname);
+
 const isFileBuild = () => window.location.protocol === "file:";
 
 const resolvedApiBaseUrl = () => {
   if (rawApiBaseUrl) return rawApiBaseUrl;
-  if (isGitHubProjectPages() || isFileBuild()) return DEFAULT_REMOTE_API_BASE_URL;
+  if (isGitHubProjectPages() || isStaticPublicSite() || isFileBuild()) return DEFAULT_REMOTE_API_BASE_URL;
   return "";
 };
 
