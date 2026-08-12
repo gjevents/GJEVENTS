@@ -20,13 +20,14 @@ def serve_static(request, path, document_root=None, **kwargs):
     return serve(request, path, document_root or settings.STATIC_ROOT, **kwargs)
 
 
-def favicon_view(request):
-    if request.path.endswith(".ico"):
-        file_name = "favicon.ico"
-        content_type = "image/x-icon"
-    else:
-        file_name = "favicon.svg"
-        content_type = "image/svg+xml"
+def favicon_view(request, file_name=None, content_type=None):
+    if not file_name:
+        if request.path.endswith(".ico"):
+            file_name = "favicon.ico"
+            content_type = "image/x-icon"
+        else:
+            file_name = "favicon.svg"
+            content_type = "image/svg+xml"
 
     favicon_path = os.path.join(settings.BASE_DIR, "dist", file_name)
     if not os.path.exists(favicon_path):
@@ -48,6 +49,8 @@ urlpatterns = [
     re_path(r"^assets/(?P<path>.*)$", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist", "assets")} ),
     path("favicon.svg", favicon_view),
     path("favicon.ico", favicon_view),
+    path("favicon-32x32.png", favicon_view, {"file_name": "favicon-32x32.png", "content_type": "image/png"}),
+    path("apple-touch-icon.png", favicon_view, {"file_name": "apple-touch-icon.png", "content_type": "image/png"}),
     path("sitemap.xml", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist"), "path": "sitemap.xml"}),
     re_path(r"^(?!admin).*$", ReactAppView.as_view()),
 ]
