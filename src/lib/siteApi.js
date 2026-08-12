@@ -1,18 +1,27 @@
+const DEFAULT_REMOTE_API_BASE_URL = "https://gjevents-bfjz.onrender.com";
 const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
 
-export const apiBaseUrl = rawApiBaseUrl.replace(/\/$/, "");
 let cachedCsrfToken = null;
 
 const isGitHubProjectPages = () =>
   window.location.hostname === "gjevents.github.io" &&
   window.location.pathname.toLowerCase().startsWith("/gjevents");
 
+const isFileBuild = () => window.location.protocol === "file:";
+
+const resolvedApiBaseUrl = () => {
+  if (rawApiBaseUrl) return rawApiBaseUrl;
+  if (isGitHubProjectPages() || isFileBuild()) return DEFAULT_REMOTE_API_BASE_URL;
+  return "";
+};
+
+export const apiBaseUrl = resolvedApiBaseUrl().replace(/\/$/, "");
+
 const normalizePath = (path) => (path.startsWith("/") ? path : `/${path}`);
 
 export const apiUrl = (path) => {
   const normalizedPath = normalizePath(path);
   if (apiBaseUrl) return `${apiBaseUrl}${normalizedPath}`;
-  if (isGitHubProjectPages()) return `/GJEVENTS${normalizedPath}`;
   return normalizedPath;
 };
 
@@ -20,7 +29,6 @@ export const mediaUrl = (path) => {
   if (!path || /^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
   const normalizedPath = normalizePath(path);
   if (apiBaseUrl) return `${apiBaseUrl}${normalizedPath}`;
-  if (isGitHubProjectPages()) return `/GJEVENTS${normalizedPath}`;
   return normalizedPath;
 };
 
