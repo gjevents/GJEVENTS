@@ -49,6 +49,7 @@ urlpatterns = [
     re_path(r"^assets/(?P<path>.*)$", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist", "assets")} ),
     path("favicon.svg", favicon_view),
     path("favicon.ico", favicon_view),
+    path("favicon-48x48.png", favicon_view, {"file_name": "favicon-48x48.png", "content_type": "image/png"}),
     path("favicon-32x32.png", favicon_view, {"file_name": "favicon-32x32.png", "content_type": "image/png"}),
     path("apple-touch-icon.png", favicon_view, {"file_name": "apple-touch-icon.png", "content_type": "image/png"}),
     path("sitemap.xml", serve_static, {"document_root": os.path.join(settings.BASE_DIR, "dist"), "path": "sitemap.xml"}),
