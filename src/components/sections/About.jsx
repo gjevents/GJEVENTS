@@ -78,10 +78,13 @@ export default function About() {
 
   return (
     <section id="about" className="relative mx-auto max-w-[120rem] px-6 py-28 md:px-12 md:py-40">
-      {/* background serif texture */}
-      <span className="pointer-events-none absolute left-0 top-10 select-none font-heading text-[18rem] leading-none text-royal/5">
-        GJ
-      </span>
+      {/* background brand mark */}
+      <img
+        src="/favicon.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 top-10 h-72 w-72 select-none object-contain opacity-5"
+      />
 
       <SectionHeading
         eyebrow="About GJ Events"

@@ -89,9 +89,14 @@ export default function SplashScreen({ onDone }) {
                 "0 0 30px 4px rgba(212,175,55,0.35)"
               ] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="flex h-28 w-28 items-center justify-center rounded-3xl border border-golden/40 bg-inkbrown/40 backdrop-blur-sm"
+              className="flex h-28 w-28 items-center justify-center rounded-3xl border border-golden/40 bg-inkbrown/40 p-4 backdrop-blur-sm"
             >
-              <span className="font-heading text-5xl font-bold text-gradient-gold">GJ</span>
+              <img
+                src="/favicon.svg"
+                alt="GJ Events logo"
+                className="h-full w-full object-contain"
+                loading="eager"
+              />
             </motion.div>
 
             {/* Sequence text */}

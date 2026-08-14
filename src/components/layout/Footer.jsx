@@ -32,8 +32,8 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-golden/40 bg-inkbrown/40 font-heading text-2xl font-bold text-gradient-gold">
-                GJ
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-golden/40 bg-inkbrown/40 p-2">
+                <img src="/favicon.svg" alt="GJ Events logo" className="h-full w-full object-contain" />
               </span>
               <span className="font-heading text-2xl font-bold text-cream">{BRAND.name}</span>
             </div>

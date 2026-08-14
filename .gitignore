@@ -32,6 +32,8 @@ __pycache__/
 db.sqlite3
 
 # Local gallery uploads
+media/about/*
+media/hero/*
 media/gallery/*
 !media/gallery/background_GJ_Event.png
 !media/gallery/test.png

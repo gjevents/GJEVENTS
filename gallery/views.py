@@ -1,5 +1,8 @@
+import os
+from datetime import datetime, timezone as datetime_timezone
 from io import BytesIO
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import QueryDict
 from django.http import JsonResponse
@@ -13,6 +16,7 @@ from .models import AboutImage, GalleryImage, HeroSlide
 
 
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp"}
+ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 MAX_FILE_SIZE = 5 * 1024 * 1024
 MAX_MANAGED_IMAGES = 10
 HERO_FIELDS = {
@@ -43,6 +47,114 @@ HERO_FIELDS = {
     "image_zoom": "int",
 }
 ABOUT_FIELDS = {"is_active": "bool", "display_order": "int"}
+
+
+def _media_url(name):
+    return f"{settings.MEDIA_URL.rstrip('/')}/{name.replace(os.sep, '/')}"
+
+
+def _title_from_filename(filename):
+    stem = os.path.splitext(os.path.basename(filename))[0]
+    return stem.replace("_", " ").replace("-", " ").strip().title() or "GJ Events"
+
+
+def _media_file_entries(folder, limit=None):
+    root = os.path.join(settings.MEDIA_ROOT, folder)
+    if not os.path.isdir(root):
+        return []
+
+    entries = []
+    for filename in os.listdir(root):
+        path = os.path.join(root, filename)
+        extension = os.path.splitext(filename)[1].lower()
+        if not os.path.isfile(path) or extension not in ALLOWED_IMAGE_EXTENSIONS:
+            continue
+        modified_at = datetime.fromtimestamp(os.path.getmtime(path), tz=datetime_timezone.utc)
+        entries.append(
+            {
+                "name": f"{folder}/{filename}",
+                "title": _title_from_filename(filename),
+                "modified_at": modified_at,
+            }
+        )
+
+    entries.sort(key=lambda item: item["modified_at"], reverse=True)
+    return entries[:limit] if limit else entries
+
+
+def _fallback_hero_payloads():
+    payloads = []
+    for index, entry in enumerate(_media_file_entries("hero", MAX_MANAGED_IMAGES), start=1):
+        payloads.append(
+            {
+                "id": f"media-hero-{index}",
+                "image": _media_url(entry["name"]),
+                "is_active": True,
+                "display_order": index,
+                "label_text": "LIVE EVENT",
+                "heading_line_1": "Experience Events",
+                "heading_line_2": "Like Never Before",
+                "description": "Professional Event Management | Premium Pass Distribution | Business Opportunities | Stall Bazaar",
+                "button_1_text": "Explore More",
+                "button_1_link": "#about",
+                "button_2_text": "Open B2B Portal",
+                "button_2_link": "",
+                "label_color": "#D4AF37",
+                "heading_color": "#FFF8E7",
+                "secondary_heading_color": "#D4AF37",
+                "description_color": "#FFF8E7",
+                "button_text_color": "#3D2B1F",
+                "button_background_color": "#D4AF37",
+                "label_font_size": 12,
+                "heading_font_size": 88,
+                "description_font_size": 18,
+                "text_alignment": "center",
+                "text_position_x": 50,
+                "text_position_y": 50,
+                "image_position_x": 50,
+                "image_position_y": 50,
+                "image_zoom": 105,
+                "created_at": entry["modified_at"].isoformat(),
+                "updated_at": entry["modified_at"].isoformat(),
+            }
+        )
+    return payloads
+
+
+def _fallback_about_payloads():
+    return [
+        {
+            "id": f"media-about-{index}",
+            "image": _media_url(entry["name"]),
+            "is_active": True,
+            "display_order": index,
+            "created_at": entry["modified_at"].isoformat(),
+            "updated_at": entry["modified_at"].isoformat(),
+        }
+        for index, entry in enumerate(_media_file_entries("about", MAX_MANAGED_IMAGES), start=1)
+    ]
+
+
+def _fallback_gallery_payloads():
+    return [
+        {
+            "id": f"media-gallery-{index}",
+            "section": "GJ Events",
+            "title": entry["title"],
+            "image": _media_url(entry["name"]),
+            "created_at": entry["modified_at"].isoformat(),
+            "updated_at": entry["modified_at"].isoformat(),
+        }
+        for index, entry in enumerate(_media_file_entries("gallery"), start=1)
+    ]
+
+
+def _managed_fallback_payloads(model):
+    if model is HeroSlide:
+        return _fallback_hero_payloads()
+    if model is AboutImage:
+        return _fallback_about_payloads()
+    return []
 
 
 def _gallery_payload(instance):
@@ -173,7 +285,10 @@ def _managed_images(request, model, payload_fn, fields):
         queryset, error = _queryset_for_request(request, model)
         if error:
             return error
-        return JsonResponse([payload_fn(item) for item in queryset], safe=False)
+        data = [payload_fn(item) for item in queryset]
+        if not data and request.GET.get("all") != "1":
+            data = _managed_fallback_payloads(model)
+        return JsonResponse(data, safe=False)
 
     staff_error = _require_staff(request)
     if staff_error:
@@ -338,6 +453,8 @@ def gallery_images(request):
     if request.method == "GET":
         images = GalleryImage.objects.all()
         data = [_gallery_payload(item) for item in images]
+        if not data:
+            data = _fallback_gallery_payloads()
         return JsonResponse(data, safe=False)
 
     if request.method == "POST":
