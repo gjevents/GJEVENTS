@@ -10,6 +10,7 @@ import Home from '@/pages/Home';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import TermsConditions from '@/pages/TermsConditions';
 import GalleryManagement from '@/pages/Admin/GalleryManagement';
+import ReducedScrollSpeed from '@/components/ReducedScrollSpeed';
 // Add page imports here
 
 const BACKEND_ADMIN_URL = "https://gjevents-bfjz.onrender.com";
@@ -68,6 +69,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClientInstance}>
+      <ReducedScrollSpeed />
       <Router basename={routerBasename}>
         <ScrollToTop />
         <Routes>

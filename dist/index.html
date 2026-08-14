@@ -20,6 +20,35 @@
         }
       })();
     </script>
+    <script>
+      (function () {
+        if (window.__gjReducedScrollSpeedLoaded) return;
+        window.__gjReducedScrollSpeedLoaded = true;
+        var scrollSpeed = 0.45;
+        var isScrollableElement = function (element) {
+          if (!element || element === document.body || element === document.documentElement) return false;
+          var style = window.getComputedStyle(element);
+          return /(auto|scroll)/.test(style.overflowY) && element.scrollHeight > element.clientHeight;
+        };
+        var shouldUseNativeScroll = function (target) {
+          if (!(target instanceof Element)) return true;
+          if (target.closest("input, textarea, select, [contenteditable='true'], [data-native-scroll]")) return true;
+          for (var element = target; element && element !== document.body; element = element.parentElement) {
+            if (isScrollableElement(element)) return true;
+          }
+          return false;
+        };
+        window.addEventListener("wheel", function (event) {
+          if (event.defaultPrevented || event.ctrlKey || shouldUseNativeScroll(event.target)) return;
+          event.preventDefault();
+          window.scrollBy({
+            top: event.deltaY * scrollSpeed,
+            left: event.deltaX * scrollSpeed,
+            behavior: "auto"
+          });
+        }, { passive: false });
+      })();
+    </script>
 
     <title>GJ Events</title>
     <meta name="title" content="GJ Events" />
