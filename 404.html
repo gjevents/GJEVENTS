@@ -2,24 +2,144 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="robots" content="noindex" />
-    <title>Redirecting | GJ Events</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#3D2B1F" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <script>
-      var isStaticPublicSite = location.hostname === "gjevents.in" || location.hostname === "www.gjevents.in";
-      var adminPath = location.pathname.replace(/\/+$/, "") === "/admin/gallery";
-      if (isStaticPublicSite && adminPath) {
-        location.replace("https://gjevents-bfjz.onrender.com" + location.pathname + location.search + location.hash);
-      } else {
-      sessionStorage.redirect = location.pathname + location.search + location.hash;
-      location.replace(
-        location.hostname === "gjevents.github.io" && location.pathname.toLowerCase().startsWith("/gjevents")
-          ? "/GJEVENTS/"
-          : "/"
-      );
-      }
+      (function () {
+        var isStaticPublicSite = location.hostname === "gjevents.in" || location.hostname === "www.gjevents.in";
+        var adminPath = location.pathname.replace(/\/+$/, "") === "/admin/gallery";
+        if (isStaticPublicSite && adminPath) {
+          location.replace("https://gjevents-bfjz.onrender.com" + location.pathname + location.search + location.hash);
+        }
+      })();
     </script>
+    <script>
+      (function () {
+        if (window.__gjReducedScrollSpeedLoaded) return;
+        window.__gjReducedScrollSpeedLoaded = true;
+        var scrollSpeed = 0.45;
+        var isScrollableElement = function (element) {
+          if (!element || element === document.body || element === document.documentElement) return false;
+          var style = window.getComputedStyle(element);
+          return /(auto|scroll)/.test(style.overflowY) && element.scrollHeight > element.clientHeight;
+        };
+        var shouldUseNativeScroll = function (target) {
+          if (!(target instanceof Element)) return true;
+          if (target.closest("input, textarea, select, [contenteditable='true'], [data-native-scroll]")) return true;
+          for (var element = target; element && element !== document.body; element = element.parentElement) {
+            if (isScrollableElement(element)) return true;
+          }
+          return false;
+        };
+        window.addEventListener("wheel", function (event) {
+          if (event.defaultPrevented || event.ctrlKey || shouldUseNativeScroll(event.target)) return;
+          event.preventDefault();
+          window.scrollBy({
+            top: event.deltaY * scrollSpeed,
+            left: event.deltaX * scrollSpeed,
+            behavior: "auto"
+          });
+        }, { passive: false });
+      })();
+    </script>
+
+    <title>GJ Events</title>
+    <meta name="title" content="GJ Events" />
+    <meta name="application-name" content="GJ Events" />
+    <meta name="description" content="GJ Events connects audiences, brands and organizers with Navratri passes, Garba events, VIP bookings, stall opportunities and event collaborations in Ahmedabad." />
+    <meta name="keywords" content="GJ Events, Navratri passes Ahmedabad, Garba events, VIP bookings, stall booking Ahmedabad, event collaborations" />
+    <meta name="author" content="GJ Events" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://gjevents.in/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gjevents.in/" />
+    <meta property="og:title" content="GJ Events" />
+    <meta property="og:description" content="GJ Events connects audiences, brands and organizers with Navratri passes, Garba events, VIP bookings, stall opportunities and event collaborations in Ahmedabad." />
+    <meta property="og:site_name" content="GJ Events" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GJ Events" />
+    <meta name="twitter:description" content="GJ Events connects audiences, brands and organizers with Navratri passes, Garba events, VIP bookings, stall opportunities and event collaborations in Ahmedabad." />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- GitHub Pages SPA path restoration -->
+    <script>
+      (function () {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.pathname + location.search + location.hash) {
+          history.replaceState(null, "", redirect);
+        }
+      })();
+    </script>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "GJ Events",
+      "description": "Navratri passes, Garba events, VIP bookings, stall opportunities and event collaborations in Ahmedabad.",
+      "url": "https://gjevents.in/",
+      "telephone": "+91-9104005719",
+      "areaServed": "Ahmedabad, India",
+      "sameAs": []
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CSq0aFze.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/query-BiODowJE.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-WdZkgdwk.js">
+    <link rel="modulepreload" crossorigin href="/assets/utils-rugSeaVE.js">
+    <link rel="modulepreload" crossorigin href="/assets/framer-C49uzTZn.js">
+    <link rel="modulepreload" crossorigin href="/assets/radix-Cv08j_g6.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CkiLjDdF.css">
+    <script type="module">
+if (window.self === window.top) {
+  let lastPath = "";
+  function getPageNameFromPath(path) {
+    const segments = path.split("/").filter(Boolean);
+    return segments[0] || null;
+  }
+  function trackPageView() {
+    const path = window.location.pathname;
+    if (path === lastPath) return;
+    lastPath = path;
+    const pageName = getPageNameFromPath(path) || "home";
+    const appId = "";
+    if (!appId) return;
+    fetch(`/api/app-logs/${appId}/log-user-in-app/${pageName}`, {
+      method: "POST",
+    }).catch(() => {});
+  }
+  const originalPushState = history.pushState.bind(history);
+  history.pushState = function (...args) {
+    originalPushState(...args);
+    trackPageView();
+  };
+  const originalReplaceState = history.replaceState.bind(history);
+  history.replaceState = function (...args) {
+    originalReplaceState(...args);
+    trackPageView();
+  };
+  window.addEventListener("popstate", trackPageView);
+  trackPageView();
+}
+</script>
   </head>
   <body>
-    Redirecting...
+    <div id="root"></div>
   </body>
 </html>

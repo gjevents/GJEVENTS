@@ -8,50 +8,20 @@ export const BRAND = {
   poweredBy: "Auctus Tech"
 };
 
-// Hero slideshow slides
-export const HERO_SLIDES = [
-  {
-    id: "garba",
-    label: "Garba Night",
-    image: "https://media.base44.com/images/public/6a749d966a0d85567d02ee6f/5ca24ef02_generated_9c0696f6.png"
-  },
-  {
-    id: "live",
-    label: "Live Event",
-    image: "https://media.base44.com/images/public/6a749d966a0d85567d02ee6f/0b556ac1b_generated_f3be1812.png"
-  },
-  {
-    id: "concert",
-    label: "Concert",
-    image: "https://media.base44.com/images/public/6a749d966a0d85567d02ee6f/bef8cac53_generated_86f71f96.png"
-  },
-  {
-    id: "vip",
-    label: "VIP Pass",
-    image: "https://media.base44.com/images/public/6a749d966a0d85567d02ee6f/ec8718005_generated_0b81c7bf.png"
-  },
-  {
-    id: "stall",
-    label: "Stall Bazaar",
-    image: "https://media.base44.com/images/public/6a749d966a0d85567d02ee6f/ad31c6bfb_generated_8ac02ce9.png"
-  }
-];
+export const LOGO_IMAGE = "/apple-touch-icon.png";
+
+// Uploaded/admin media should be the only hero/gallery source.
+export const HERO_SLIDES = [];
 
 // About imagery
-export const ABOUT_IMAGE =
-  "https://media.base44.com/images/public/6a749d966a0d85567d02ee6f/2bf3baf8e_generated_a1dc1946.png";
+export const ABOUT_IMAGE = LOGO_IMAGE;
 
 // Gallery items
 export const GALLERY_ITEMS = [
-  ...HERO_SLIDES.map((s) => ({
-    id: `g-${s.id}`,
-    src: s.image,
-    alt: `GJ Events ${s.label} — premium event management`
-  })),
   {
-    id: "g-about",
-    src: ABOUT_IMAGE,
-    alt: "GJ Events luxury event setup — premium decoration"
+    id: "g-logo",
+    src: LOGO_IMAGE,
+    alt: "GJ Events logo"
   }
 ];
 

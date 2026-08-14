@@ -6,7 +6,7 @@ export default function Seo({
   title = "GJ Events",
   description = "GJ Events connects audiences, brands and organizers with Navratri passes, Garba events, VIP bookings, stall opportunities and event collaborations in Ahmedabad.",
   path = "/",
-  image = "https://media.base44.com/images/public/6a749d966a0d85567d02ee6f/5ca24ef02_generated_9c0696f6.png"
+  image = "https://gjevents.in/apple-touch-icon.png"
 }) {
   const url = `https://gjevents.in${path}`;
   return (
