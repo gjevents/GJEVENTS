@@ -12,12 +12,30 @@ import TermsConditions from '@/pages/TermsConditions';
 import GalleryManagement from '@/pages/Admin/GalleryManagement';
 // Add page imports here
 
+const BACKEND_ADMIN_URL = "https://gjevents-bfjz.onrender.com";
+
 const routerBasename =
   typeof window !== "undefined" &&
   window.location.hostname === "gjevents.github.io" &&
   window.location.pathname.toLowerCase().startsWith("/gjevents")
     ? "/GJEVENTS"
     : "/";
+
+const isStaticPublicSite =
+  typeof window !== "undefined" &&
+  ["gjevents.in", "www.gjevents.in"].includes(window.location.hostname);
+
+const BackendAdminRedirect = () => {
+  if (typeof window !== "undefined") {
+    window.location.replace(`${BACKEND_ADMIN_URL}${window.location.pathname}${window.location.search}${window.location.hash}`);
+  }
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+    </div>
+  );
+};
 
 const AdminAuthGate = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -64,9 +82,13 @@ function App() {
           <Route
             path="/admin/gallery"
             element={
-              <AuthProvider>
-                <AdminAuthGate />
-              </AuthProvider>
+              isStaticPublicSite ? (
+                <BackendAdminRedirect />
+              ) : (
+                <AuthProvider>
+                  <AdminAuthGate />
+                </AuthProvider>
+              )
             }
           />
           <Route path="*" element={<PageNotFound />} />

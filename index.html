@@ -11,6 +11,15 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <script>
+      (function () {
+        var isStaticPublicSite = location.hostname === "gjevents.in" || location.hostname === "www.gjevents.in";
+        var adminPath = location.pathname.replace(/\/+$/, "") === "/admin/gallery";
+        if (isStaticPublicSite && adminPath) {
+          location.replace("https://gjevents-bfjz.onrender.com" + location.pathname + location.search + location.hash);
+        }
+      })();
+    </script>
 
     <title>GJ Events</title>
     <meta name="title" content="GJ Events" />
