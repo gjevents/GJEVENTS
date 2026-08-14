@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView, useScroll, useTransform } from "framer-motion";
 import { ShieldCheck, Sparkles, Eye, Users } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { ABOUT_IMAGE } from "@/utils/constants";
 import { apiUrl, mediaUrl, parseApiResponse } from "@/lib/siteApi";
 
 const ROTATE_MS = 4200;
@@ -49,7 +48,7 @@ function Counter({ value, suffix }) {
 
 export default function About() {
   const imgRef = useRef(null);
-  const [images, setImages] = useState([{ id: "fallback", image: ABOUT_IMAGE }]);
+  const [images, setImages] = useState([]);
   const [imageIndex, setImageIndex] = useState(0);
   const { scrollYProgress } = useScroll({ target: imgRef, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
@@ -96,17 +95,30 @@ export default function About() {
         {/* Image with parallax */}
         <div ref={imgRef} className="relative overflow-hidden rounded-3xl premium-shadow">
           <AnimatePresence mode="sync">
-            <motion.img
-              key={images[imageIndex]?.id || "fallback"}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1, ease: "easeInOut" }}
-              style={{ y, scale: 1.12 }}
-              src={images[imageIndex]?.image || ABOUT_IMAGE}
-              alt="GJ Events luxury event setup"
-              className="h-[34rem] w-full object-cover"
-            />
+            {images.length ? (
+              <motion.img
+                key={images[imageIndex]?.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1, ease: "easeInOut" }}
+                style={{ y, scale: 1.12 }}
+                src={images[imageIndex]?.image}
+                alt="GJ Events luxury event setup"
+                className="h-[34rem] w-full object-cover"
+              />
+            ) : (
+              <motion.div
+                key="logo-placeholder"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1, ease: "easeInOut" }}
+                className="flex h-[34rem] w-full items-center justify-center bg-heritage-gradient"
+              >
+                <img src="/favicon.svg" alt="GJ Events logo" className="h-32 w-32 object-contain opacity-90" />
+              </motion.div>
+            )}
           </AnimatePresence>
           <div className="absolute inset-0 bg-gradient-to-t from-inkbrown/60 to-transparent" />
           <div className="absolute bottom-6 left-6 right-6 glass-card rounded-2xl p-5">

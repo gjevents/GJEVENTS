@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { HERO_SLIDES, B2B_PORTAL_URL } from "@/utils/constants";
+import { B2B_PORTAL_URL } from "@/utils/constants";
 import { apiUrl, mediaUrl, parseApiResponse } from "@/lib/siteApi";
 
 const SLIDE_MS = 4200;
@@ -48,10 +48,10 @@ function MagneticButton({ text = "Open B2B Portal", href = B2B_PORTAL_URL, textC
   );
 }
 
-const fallbackSlides = HERO_SLIDES.map((slide, index) => ({
-  id: slide.id,
-  image: slide.image,
-  label_text: slide.label,
+const defaultSlide = {
+  id: "default",
+  image: "",
+  label_text: "GJ EVENTS",
   heading_line_1: "Experience Events",
   heading_line_2: "Like Never Before",
   description: "Professional Event Management | Premium Pass Distribution | Business Opportunities | Stall Bazaar",
@@ -74,20 +74,20 @@ const fallbackSlides = HERO_SLIDES.map((slide, index) => ({
   image_position_x: 50,
   image_position_y: 50,
   image_zoom: 105,
-  display_order: index + 1,
-}));
+  display_order: 1,
+};
 
 export default function Hero() {
   const [index, setIndex] = useState(0);
-  const [slides, setSlides] = useState(fallbackSlides);
+  const [slides, setSlides] = useState([defaultSlide]);
 
   useEffect(() => {
     const loadSlides = async () => {
       try {
         const response = await fetch(apiUrl("/api/hero-slides/"));
         const payload = await parseApiResponse(response, "Unable to load hero slides.");
-        if (response.ok && payload.length) {
-          setSlides(payload.map((slide) => ({ ...slide, image: mediaUrl(slide.image) })));
+        if (response.ok) {
+          setSlides(payload.length ? payload.map((slide) => ({ ...slide, image: mediaUrl(slide.image) })) : [defaultSlide]);
           setIndex(0);
         }
       } catch (error) {
@@ -103,7 +103,7 @@ export default function Hero() {
     return () => clearInterval(t);
   }, [slides.length]);
 
-  const slide = slides[index] || fallbackSlides[0];
+  const slide = slides[index] || defaultSlide;
   const imageZoom = Math.max(100, Number(slide.image_zoom || 105));
   const handlePrimaryClick = () => {
     if (!slide.button_1_link || slide.button_1_link.startsWith("#")) {
@@ -128,15 +128,17 @@ export default function Hero() {
                   transition={{ duration: 1.4, ease: "easeInOut" }}
                   className="absolute inset-0"
                 >
-                  <img
-                    src={slide.image}
-                    alt={`GJ Events ${slide.label_text}`}
-                    className="h-full w-full object-cover"
-                    style={{
-                      objectPosition: `${slide.image_position_x || 50}% ${slide.image_position_y || 50}%`,
-                      transform: `scale(${imageZoom / 100})`,
-                    }}
-                  />
+                  {slide.image ? (
+                    <img
+                      src={slide.image}
+                      alt={`GJ Events ${slide.label_text}`}
+                      className="h-full w-full object-cover"
+                      style={{
+                        objectPosition: `${slide.image_position_x || 50}% ${slide.image_position_y || 50}%`,
+                        transform: `scale(${imageZoom / 100})`,
+                      }}
+                    />
+                  ) : null}
                 </motion.div>
               )
           )}

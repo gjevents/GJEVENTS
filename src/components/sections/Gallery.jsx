@@ -3,14 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X, ZoomIn } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GALLERY_ITEMS } from "@/utils/constants";
 import { apiUrl, mediaUrl, parseApiResponse } from "@/lib/siteApi";
-
-const fallbackImages = GALLERY_ITEMS.map((item) => ({
-  id: item.id,
-  image: item.src,
-  title: item.alt,
-}));
 
 export default function Gallery() {
   const [active, setActive] = useState(null);
@@ -23,10 +16,10 @@ export default function Gallery() {
         const response = await fetch(apiUrl("/api/gallery/"));
         const payload = await parseApiResponse(response, "Unable to load gallery because the backend returned HTML instead of JSON.");
         if (!response.ok) throw new Error(payload.error || `Unable to load gallery. HTTP status: ${response.status}.`);
-        setImages(payload.length ? payload.map((item) => ({ ...item, image: mediaUrl(item.image) })) : fallbackImages);
+        setImages(payload.map((item) => ({ ...item, image: mediaUrl(item.image) })));
       } catch (error) {
         console.error(error);
-        setImages(fallbackImages);
+        setImages([]);
       } finally {
         setLoading(false);
       }
@@ -51,7 +44,7 @@ export default function Gallery() {
             </div>
           ))}
         </div>
-      ) : (
+      ) : images.length ? (
         <div className="mt-20 columns-1 gap-5 sm:columns-2 lg:columns-3 [column-fill:_balance]">
           {images.map((item, i) => (
             <motion.button
@@ -76,6 +69,10 @@ export default function Gallery() {
               </div>
             </motion.button>
           ))}
+        </div>
+      ) : (
+        <div className="mt-20 rounded-2xl border border-golden/20 bg-cream/60 p-10 text-center text-muted-foreground">
+          No gallery images are published yet.
         </div>
       )}
 
