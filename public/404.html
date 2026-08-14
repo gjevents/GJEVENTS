@@ -5,12 +5,18 @@
     <meta name="robots" content="noindex" />
     <title>Redirecting | GJ Events</title>
     <script>
+      var isStaticPublicSite = location.hostname === "gjevents.in" || location.hostname === "www.gjevents.in";
+      var adminPath = location.pathname.replace(/\/+$/, "") === "/admin/gallery";
+      if (isStaticPublicSite && adminPath) {
+        location.replace("https://gjevents-bfjz.onrender.com" + location.pathname + location.search + location.hash);
+      } else {
       sessionStorage.redirect = location.pathname + location.search + location.hash;
       location.replace(
         location.hostname === "gjevents.github.io" && location.pathname.toLowerCase().startsWith("/gjevents")
           ? "/GJEVENTS/"
           : "/"
       );
+      }
     </script>
   </head>
   <body>
