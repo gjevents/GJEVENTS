@@ -7,6 +7,9 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import Particles from "@/components/ui/Particles";
 import { B2B_PORTAL_URL } from "@/utils/constants";
 
+const LAUNCH_TIME = Date.parse("2027-09-30T11:11:00+05:30");
+const LAUNCH_LABEL = "30 Sept 2027, 11:11 AM IST";
+
 const FEATURES = [
   { icon: CreditCard, label: "Online Pass Purchase" },
   { icon: Store, label: "Online Stall Booking" },
@@ -20,25 +23,31 @@ const FEATURES = [
   { icon: Smartphone, label: "Mobile Experience" }
 ];
 
-// Countdown to the platform launch.
-function useCountdown(target) {
-  const [remaining, setRemaining] = useState(() => target - Date.now());
-  useEffect(() => {
-    const t = setInterval(() => setRemaining(target - Date.now()), 1000);
-    return () => clearInterval(t);
-  }, [target]);
-  const clamp = Math.max(remaining, 0);
-  const days = Math.floor(clamp / 86400000);
-  const hours = Math.floor((clamp % 86400000) / 3600000);
-  const mins = Math.floor((clamp % 3600000) / 60000);
-  const secs = Math.floor((clamp % 60000) / 1000);
+function getRemainingTime(target) {
+  const remaining = Math.max(target - Date.now(), 0);
+  const days = Math.floor(remaining / 86400000);
+  const hours = Math.floor((remaining % 86400000) / 3600000);
+  const mins = Math.floor((remaining % 3600000) / 60000);
+  const secs = Math.floor((remaining % 60000) / 1000);
   return { days, hours, mins, secs };
 }
 
+// Countdown to the fixed platform launch time.
+function useCountdown(target) {
+  const [remaining, setRemaining] = useState(() => getRemainingTime(target));
+
+  useEffect(() => {
+    const update = () => setRemaining(getRemainingTime(target));
+    update();
+    const t = setInterval(update, 1000);
+    return () => clearInterval(t);
+  }, [target]);
+
+  return remaining;
+}
+
 export default function ComingSoon() {
-  // Target: ~120 days from now, stable per render via ref.
-  const targetRef = useRef(Date.now() + 1000 * 60 * 60 * 24 * 118);
-  const { days, hours, mins, secs } = useCountdown(targetRef.current);
+  const { days, hours, mins, secs } = useCountdown(LAUNCH_TIME);
 
   // 3D digital pass flip on scroll
   const passRef = useRef(null);
@@ -97,7 +106,10 @@ export default function ComingSoon() {
             </div>
 
             {/* Countdown */}
-            <div className="mt-10 grid grid-cols-4 gap-3">
+            <p className="mt-10 text-xs font-semibold uppercase tracking-[0.28em] text-golden/80">
+              Launching on {LAUNCH_LABEL}
+            </p>
+            <div className="mt-4 grid grid-cols-4 gap-3">
               {units.map((u) => (
                 <div key={u.l} className="glass-dark rounded-2xl p-4 text-center">
                   <p className="font-heading text-4xl font-bold text-gradient-gold md:text-5xl tabular-nums">
