@@ -79,10 +79,13 @@ export default function About() {
     <section id="about" className="relative mx-auto max-w-[120rem] px-6 py-28 md:px-12 md:py-40">
       {/* background brand mark */}
       <img
-        src="/favicon.svg"
+        src="/apple-touch-icon.png"
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute left-0 top-10 h-72 w-72 select-none object-contain opacity-5"
+        onError={(event) => {
+          event.currentTarget.src = "/favicon.svg";
+        }}
       />
 
       <SectionHeading
@@ -116,7 +119,14 @@ export default function About() {
                 transition={{ duration: 1, ease: "easeInOut" }}
                 className="flex h-[34rem] w-full items-center justify-center bg-heritage-gradient"
               >
-                <img src="/favicon.svg" alt="GJ Events logo" className="h-32 w-32 object-contain opacity-90" />
+                <img
+                  src="/apple-touch-icon.png"
+                  alt="GJ Events logo"
+                  className="h-32 w-32 object-contain opacity-90"
+                  onError={(event) => {
+                    event.currentTarget.src = "/favicon.svg";
+                  }}
+                />
               </motion.div>
             )}
           </AnimatePresence>

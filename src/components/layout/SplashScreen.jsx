@@ -92,10 +92,13 @@ export default function SplashScreen({ onDone }) {
               className="flex h-28 w-28 items-center justify-center rounded-3xl border border-golden/40 bg-inkbrown/40 p-4 backdrop-blur-sm"
             >
               <img
-                src="/favicon.svg"
+                src="/apple-touch-icon.png"
                 alt="GJ Events logo"
                 className="h-full w-full object-contain"
                 loading="eager"
+                onError={(event) => {
+                  event.currentTarget.src = "/favicon.svg";
+                }}
               />
             </motion.div>
 

@@ -33,7 +33,14 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3">
               <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-golden/40 bg-inkbrown/40 p-2">
-                <img src="/favicon.svg" alt="GJ Events logo" className="h-full w-full object-contain" />
+                <img
+                  src="/apple-touch-icon.png"
+                  alt="GJ Events logo"
+                  className="h-full w-full object-contain"
+                  onError={(event) => {
+                    event.currentTarget.src = "/favicon.svg";
+                  }}
+                />
               </span>
               <span className="font-heading text-2xl font-bold text-cream">{BRAND.name}</span>
             </div>
