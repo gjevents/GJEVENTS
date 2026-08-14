@@ -38,17 +38,5 @@ export const CONTACTS = [
     role: "Technical Support",
     phone: "+91 9909729830",
     tel: "+919909729830"
-  },
-  {
-    name: "Jeel Patel",
-    role: "Purchase Passes / Stall",
-    phone: "+91 9712428194",
-    tel: "+919712428194"
-  },
-  {
-    name: "Rudra Darji",
-    role: "Purchase Passes / Stall",
-    phone: "+91 9978980281",
-    tel: "+919978980281"
   }
 ];
