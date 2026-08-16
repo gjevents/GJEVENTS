@@ -32,6 +32,8 @@ GitHub Pages is static, so uploaded photos cannot be saved directly inside GitHu
 Recommended setup:
 
 1. Deploy this repository as a Django web service on Render.
+   - The service must have a persistent disk mounted at `/opt/render/project/src/media`.
+   - If the service is created manually without this disk, uploaded images and the SQLite database can disappear after restarts, redeploys, or idle recovery.
 2. Set backend environment variables:
    - `DJANGO_DEBUG=False`
    - `DJANGO_SECRET_KEY=<secure random value>`
