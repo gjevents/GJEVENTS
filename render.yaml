@@ -5,10 +5,6 @@ services:
     plan: starter
     buildCommand: pip install -r requirements.txt && npm ci && npm run build && python manage.py collectstatic --noinput
     startCommand: python manage.py migrate && python manage.py ensure_admin && gunicorn gj_event_dashboard.wsgi:application
-    disk:
-      name: gallery-media
-      mountPath: /opt/render/project/src/media
-      sizeGB: 1
     envVars:
       - key: DJANGO_DEBUG
         value: "False"
@@ -18,10 +14,14 @@ services:
         value: https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io,https://gjevents-bfjz.onrender.com
       - key: DJANGO_CORS_ALLOWED_ORIGINS
         value: https://gjevents.in,https://www.gjevents.in,https://gjevents.github.io
-      - key: DJANGO_MEDIA_ROOT
-        value: /opt/render/project/src/media
-      - key: DJANGO_SQLITE_PATH
-        value: /opt/render/project/src/media/db.sqlite3
+      - key: DATABASE_URL
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
       - key: DJANGO_SUPERUSER_USERNAME
         sync: false
       - key: DJANGO_SUPERUSER_EMAIL

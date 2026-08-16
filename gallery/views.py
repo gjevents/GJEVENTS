@@ -3,6 +3,7 @@ from io import BytesIO
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
 from django.db import connection
 from django.http import QueryDict
 from django.http import JsonResponse
@@ -330,6 +331,8 @@ def storage_status(request):
 
     return JsonResponse(
         {
+            "default_storage": f"{default_storage.__class__.__module__}.{default_storage.__class__.__name__}",
+            "cloudinary_enabled": bool(getattr(settings, "USE_CLOUDINARY_STORAGE", False)),
             "media_root": media_root,
             "media_root_exists": os.path.isdir(media_root),
             "media_root_writable": writable,
