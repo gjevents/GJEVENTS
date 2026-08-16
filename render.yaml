@@ -3,7 +3,7 @@ services:
     name: gjevents
     env: python
     plan: starter
-    buildCommand: pip install -r requirements.txt && npm ci && npm run build && python manage.py collectstatic --noinput
+    buildCommand: pip install --prefer-binary -r requirements.txt && npm ci && npm run build && python manage.py collectstatic --noinput
     startCommand: python manage.py migrate && python manage.py ensure_admin && gunicorn gj_event_dashboard.wsgi:application
     envVars:
       - key: DJANGO_DEBUG
