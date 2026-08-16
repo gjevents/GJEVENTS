@@ -10,6 +10,7 @@ from .views import (
     hero_slide_detail,
     hero_slides,
     hero_slides_reorder,
+    storage_status,
 )
 
 urlpatterns = [
@@ -22,4 +23,5 @@ urlpatterns = [
     path("about-images/<int:pk>/", about_image_detail, name="about-image-detail"),
     path("gallery/", gallery_images, name="gallery-list"),
     path("gallery/<int:pk>/", gallery_image_detail, name="gallery-detail"),
+    path("storage-status/", storage_status, name="storage-status"),
 ]

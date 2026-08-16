@@ -1,6 +1,9 @@
+import os
 from io import BytesIO
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db import connection
 from django.http import QueryDict
 from django.http import JsonResponse
 from django.http.multipartparser import MultiPartParser, MultiPartParserError
@@ -301,6 +304,46 @@ def _require_staff(request):
 @ensure_csrf_cookie
 def csrf_token(request):
     return JsonResponse({"csrfToken": get_token(request)})
+
+
+@require_http_methods(["GET"])
+def storage_status(request):
+    media_root = str(settings.MEDIA_ROOT)
+    database_name = str(connection.settings_dict.get("NAME", ""))
+    missing_files = {
+        "hero": sum(1 for item in HeroSlide.objects.exclude(image="") if not item.image.storage.exists(item.image.name)),
+        "about": sum(1 for item in AboutImage.objects.exclude(image="") if not item.image.storage.exists(item.image.name)),
+        "gallery": sum(1 for item in GalleryImage.objects.exclude(image="") if not item.image.storage.exists(item.image.name)),
+    }
+    writable = False
+    write_error = ""
+    probe_path = os.path.join(media_root, ".storage_probe")
+
+    try:
+        os.makedirs(media_root, exist_ok=True)
+        with open(probe_path, "w", encoding="utf-8") as probe:
+            probe.write("ok")
+        os.remove(probe_path)
+        writable = True
+    except OSError as exc:
+        write_error = str(exc)
+
+    return JsonResponse(
+        {
+            "media_root": media_root,
+            "media_root_exists": os.path.isdir(media_root),
+            "media_root_writable": writable,
+            "media_root_write_error": write_error,
+            "database_name": database_name,
+            "database_exists": os.path.exists(database_name) if database_name else False,
+            "counts": {
+                "hero": HeroSlide.objects.count(),
+                "about": AboutImage.objects.count(),
+                "gallery": GalleryImage.objects.count(),
+            },
+            "missing_files": missing_files,
+        }
+    )
 
 
 @require_http_methods(["GET", "POST"])
