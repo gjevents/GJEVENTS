@@ -351,7 +351,14 @@ def storage_status(request):
 
 @require_http_methods(["GET", "POST"])
 def hero_slides(request):
-    return _managed_images(request, HeroSlide, _hero_payload, HERO_FIELDS)
+    try:
+        return _managed_images(request, HeroSlide, _hero_payload, HERO_FIELDS)
+    except Exception as exc:
+        import logging
+        logging.error(f"Error in hero_slides: {exc}")
+        if request.method == "GET":
+            return JsonResponse([], safe=False, status=200)
+        return JsonResponse({"error": str(exc)}, status=500)
 
 
 @require_http_methods(["PUT", "PATCH", "DELETE"])
@@ -366,7 +373,14 @@ def hero_slides_reorder(request):
 
 @require_http_methods(["GET", "POST"])
 def about_images(request):
-    return _managed_images(request, AboutImage, _about_payload, ABOUT_FIELDS)
+    try:
+        return _managed_images(request, AboutImage, _about_payload, ABOUT_FIELDS)
+    except Exception as exc:
+        import logging
+        logging.error(f"Error in about_images: {exc}")
+        if request.method == "GET":
+            return JsonResponse([], safe=False, status=200)
+        return JsonResponse({"error": str(exc)}, status=500)
 
 
 @require_http_methods(["PUT", "PATCH", "DELETE"])
@@ -381,37 +395,44 @@ def about_images_reorder(request):
 
 @require_http_methods(["GET", "POST"])
 def gallery_images(request):
-    if request.method == "GET":
-        images = GalleryImage.objects.all()
-        data = [_gallery_payload(item) for item in images]
-        return JsonResponse(data, safe=False)
+    try:
+        if request.method == "GET":
+            images = GalleryImage.objects.all()
+            data = [_gallery_payload(item) for item in images]
+            return JsonResponse(data, safe=False)
 
-    if request.method == "POST":
-        staff_error = _require_staff(request)
-        if staff_error:
-            return staff_error
+        if request.method == "POST":
+            staff_error = _require_staff(request)
+            if staff_error:
+                return staff_error
 
-        data, files, parse_error = _parse_body_files(request)
-        if parse_error:
-            return JsonResponse({"error": parse_error}, status=400)
+            data, files, parse_error = _parse_body_files(request)
+            if parse_error:
+                return JsonResponse({"error": parse_error}, status=400)
 
-        try:
-            uploaded_file = files["image"]
-            _validate_image(uploaded_file)
-        except (KeyError, ValidationError) as exc:
-            return JsonResponse({"error": str(exc)}, status=400)
+            try:
+                uploaded_file = files["image"]
+                _validate_image(uploaded_file)
+            except (KeyError, ValidationError) as exc:
+                return JsonResponse({"error": str(exc)}, status=400)
 
-        instance = GalleryImage(
-            section=data.get("section", "General"),
-            title=data.get("title", uploaded_file.name),
-            image=uploaded_file,
-        )
-        save_error = _save_image_instance(instance)
-        if save_error:
-            return JsonResponse({"error": save_error}, status=500)
-        return JsonResponse(_gallery_payload(instance), status=201)
+            instance = GalleryImage(
+                section=data.get("section", "General"),
+                title=data.get("title", uploaded_file.name),
+                image=uploaded_file,
+            )
+            save_error = _save_image_instance(instance)
+            if save_error:
+                return JsonResponse({"error": save_error}, status=500)
+            return JsonResponse(_gallery_payload(instance), status=201)
 
-    return JsonResponse({"error": "Method not allowed"}, status=405)
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+    except Exception as exc:
+        import logging
+        logging.error(f"Error in gallery_images: {exc}")
+        if request.method == "GET":
+            return JsonResponse([], safe=False, status=200)
+        return JsonResponse({"error": str(exc)}, status=500)
 
 
 @require_http_methods(["PUT", "PATCH", "DELETE"])

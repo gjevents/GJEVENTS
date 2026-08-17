@@ -31,6 +31,9 @@ def favicon_view(request, file_name=None, content_type=None):
 
     favicon_path = os.path.join(settings.BASE_DIR, "dist", file_name)
     if not os.path.exists(favicon_path):
+        # Fallback to public folder if dist doesn't have it
+        favicon_path = os.path.join(settings.BASE_DIR, "public", file_name)
+    if not os.path.exists(favicon_path):
         raise Http404("favicon not found")
     return FileResponse(open(favicon_path, "rb"), content_type=content_type)
 

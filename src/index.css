@@ -1,7 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+/* stylelint-disable-next-line at-rule-no-unknown */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind base;
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind components;
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind utilities;
 
 @layer base {
@@ -40,10 +44,12 @@
   }
 
   * {
+    /* stylelint-disable-next-line at-rule-no-unknown */
     @apply border-border outline-ring/40;
   }
 
   body {
+    /* stylelint-disable-next-line at-rule-no-unknown */
     @apply bg-background text-foreground font-body antialiased;
     overflow-x: hidden;
   }

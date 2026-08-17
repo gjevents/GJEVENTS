@@ -2,6 +2,12 @@
   "css.validate": false,
   "css.lint.unknownAtRules": "ignore",
   "css.lint.vendorPrefix": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "postcss.lint.unknownAtRules": "ignore",
+  "stylelint.enable": false,
+  "css.customData": [
+    "./.vscode/tailwind.css-data.json"
+  ],
   "tailwindCSS.includeLanguages": {
     "javascript": "javascript",
     "javascriptreact": "javascriptreact",
