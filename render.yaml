@@ -1,10 +1,10 @@
 services:
   - type: web
     name: gjevents
-    env: python
+    runtime: python
     plan: starter
     buildCommand: pip install --prefer-binary -r requirements.txt && npm ci && npm run build && python manage.py collectstatic --noinput
-    startCommand: python manage.py migrate && python manage.py ensure_admin && gunicorn gj_event_dashboard.wsgi:application
+    startCommand: python manage.py migrate && python manage.py ensure_admin && gunicorn gj_event_dashboard.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DJANGO_DEBUG
         value: "False"
