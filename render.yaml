@@ -4,8 +4,8 @@ services:
     runtime: python
     plan: free
     healthCheckPath: /healthz/
-    buildCommand: pip install --prefer-binary -r requirements.txt && npm ci && npm run build && python manage.py collectstatic --noinput
-    startCommand: python manage.py migrate && python manage.py ensure_admin && gunicorn gj_event_dashboard.wsgi:application --bind 0.0.0.0:$PORT
+    buildCommand: pip install --prefer-binary -r requirements.txt && npm ci && npm run build && python manage.py migrate --noinput && python manage.py ensure_admin && python manage.py collectstatic --noinput
+    startCommand: gunicorn gj_event_dashboard.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DJANGO_DEBUG
         value: "False"
